@@ -54,7 +54,9 @@ SRC = $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
       $(ARDUINO)/pins_arduino.c
 CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
          $(ARDUINO)/Print.cpp \
-         $(LIBS_DIR)/ardulib/ShiftReg.cpp
+         $(LIBS_DIR)/ardulib/ShiftReg.cpp \
+         $(LIBS_DIR)/ardulib/Button.cpp \
+         Dice.cpp DiceController.cpp
 FORMAT = ihex
 
 
@@ -73,8 +75,8 @@ CDEFS = -DF_CPU=$(F_CPU)
 CXXDEFS = -DF_CPU=$(F_CPU)
 
 # Place -I options here
-CINCS = -I$(ARDUINO) -I$(LIBS_DIR)
-CXXINCS = -I$(ARDUINO) -$(LIBS_DIR)
+CINCS = -I$(ARDUINO) -I$(LIBS_DIR) -I$(ARDUINO)/../../libraries/
+CXXINCS = -I$(ARDUINO) -$(LIBS_DIR) -I$(ARDUINO)/../../libraries/
 
 # Compiler flag to set the C Standard level.
 # c89   - "ANSI" C
