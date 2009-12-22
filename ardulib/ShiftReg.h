@@ -1,9 +1,7 @@
 #ifndef SHIFTREG_H
 #define SHIFTREG_H
 
-#include <stdint.h>
-
-typedef uint8_t pin_t;
+#include "ardulib/utils.h"
 
 class ShiftReg
 {

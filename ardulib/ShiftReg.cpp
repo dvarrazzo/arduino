@@ -1,6 +1,6 @@
 #include "ShiftReg.h"
 
-#include "wiring.h" // for pinMode
+#include "wiring.h" // for pinMode, digitalWrite
 
 ShiftReg::ShiftReg(const pin_t data_pin, const pin_t clock_pin, const pin_t latch_pin)
     : data_pin(data_pin), clock_pin(clock_pin), latch_pin(latch_pin)
