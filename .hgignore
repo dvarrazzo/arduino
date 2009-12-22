@@ -1,4 +1,5 @@
 .*\.sw[po]$
+.*\.[do]$
 ^dice/applet/.*
 ^OttoLed/.*
 ^Blink/.*

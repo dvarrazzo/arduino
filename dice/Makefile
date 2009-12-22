@@ -36,6 +36,7 @@
 
 TARGET = $(notdir $(CURDIR))
 INSTALL_DIR = /home/piro/arduino-0017
+LIBS_DIR = ..
 PORT = /dev/ttyUSB0
 UPLOAD_RATE = 57600
 AVRDUDE_PROGRAMMER = stk500v1
@@ -46,19 +47,14 @@ F_CPU = 16000000
 # Below here nothing should be changed...
 
 ARDUINO = $(INSTALL_DIR)/hardware/cores/arduino
-AVR_TOOLS_PATH = /usr/bin# $(INSTALL_DIR)/hardware/tools/avr/bin
-# SRC =  $(ARDUINO)/pins_arduino.c $(ARDUINO)/wiring.c \
-# $(ARDUINO)/wiring_analog.c $(ARDUINO)/wiring_digital.c \
-# $(ARDUINO)/wiring_pulse.c $(ARDUINO)/wiring_serial.c \
-# $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c
-# CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
-# $(ARDUINO)/Print.cpp
+AVR_TOOLS_PATH = /usr/bin
 
 SRC = $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
-	  $(ARDUINO)/wiring.c $(ARDUINO)/wiring_digital.c \
-	  $(ARDUINO)/pins_arduino.c
+      $(ARDUINO)/wiring.c $(ARDUINO)/wiring_digital.c \
+      $(ARDUINO)/pins_arduino.c
 CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
-$(ARDUINO)/Print.cpp
+         $(ARDUINO)/Print.cpp \
+         $(LIBS_DIR)/ardulib/ShiftReg.cpp
 FORMAT = ihex
 
 
@@ -77,8 +73,8 @@ CDEFS = -DF_CPU=$(F_CPU)
 CXXDEFS = -DF_CPU=$(F_CPU)
 
 # Place -I options here
-CINCS = -I$(ARDUINO)
-CXXINCS = -I$(ARDUINO)
+CINCS = -I$(ARDUINO) -I$(LIBS_DIR)
+CXXINCS = -I$(ARDUINO) -$(LIBS_DIR)
 
 # Compiler flag to set the C Standard level.
 # c89   - "ANSI" C
