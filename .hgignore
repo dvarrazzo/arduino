@@ -1,5 +1,6 @@
 .*\.sw[po]$
 .*\.[do]$
 ^dice/applet/.*
+^nunchuck/applet/.*
 ^OttoLed/.*
 ^Blink/.*
