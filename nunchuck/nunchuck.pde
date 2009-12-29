@@ -323,8 +323,8 @@ void parse_nunchuck_data(uint8_t buffer[], struct s_nunchuck_state_t *out)
 	out->acc_y = buffer[3] << 2;
 	out->acc_z = buffer[4] << 2;
 
-	out->btn_z =	buffer[5]				& 1;
-	out->btn_c = (buffer[5] >> 1) & 1;
+	out->btn_z = 1 ^  (buffer[5]       & 1);
+	out->btn_c = 1 ^ ((buffer[5] >> 1) & 1);
 
 	out->acc_x |= (buffer[5] >> 2) & 3;
 	out->acc_y |= (buffer[5] >> 4) & 3;
