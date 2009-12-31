@@ -22,9 +22,9 @@
  * Ard. Nun. Wire    Color
  * PIN  PIN
  * ---- ---- ------- ------------
- * 3    1    +3V     Black/White
  * 5    2    Clock   Blue
  * 4    5    Data    Brown
+ * 3    1    +3V     Black/White
  * 2    6    Ground  Black
  * ---- ---- ------- ------------
  */
@@ -54,7 +54,9 @@ int cnt = 0;
 int ledPin = 13;
 
 #undef SHOW_ACC_RGB
-#define SHOW_JOY_XY
+#undef SHOW_JOY_XY
+#define SHOW_ACC_XY
+#define SHOW_BTN_CZ
 
 // if i want to convert acc to rgb led
 #ifdef SHOW_ACC_RGB
@@ -63,12 +65,18 @@ static const uint8_t PIN_LED_G = 11;
 static const uint8_t PIN_LED_B = 12;
 #endif
 
-// if i want to display the joystick into 4 leds
-#ifdef SHOW_JOY_XY
+// if i want to display the joystick or acc into 4 leds
+#if defined(SHOW_JOY_XY) || defined(SHOW_ACC_XY)
 static const uint8_t PIN_LED_XP = 6;
 static const uint8_t PIN_LED_XN = 5;
 static const uint8_t PIN_LED_YP = 10;
 static const uint8_t PIN_LED_YN = 11;
+#endif
+
+// if i want to display the C and Z buttons
+#ifdef SHOW_BTN_CZ
+static const uint8_t PIN_LED_C = 2;
+static const uint8_t PIN_LED_Z = 8;
 #endif
 
 // Forward declarations
@@ -126,11 +134,16 @@ void setup ()
 	pinMode(PIN_LED_B, OUTPUT);
 #endif
 
-#ifdef SHOW_JOY_XY
+#if defined(SHOW_JOY_XY) || defined(SHOW_ACC_XY)
 	pinMode(PIN_LED_XP, OUTPUT);
 	pinMode(PIN_LED_XN, OUTPUT);
 	pinMode(PIN_LED_YP, OUTPUT);
 	pinMode(PIN_LED_YN, OUTPUT);
+#endif
+
+#ifdef SHOW_BTN_CZ
+	pinMode(PIN_LED_C, OUTPUT);
+	pinMode(PIN_LED_Z, OUTPUT);
 #endif
 
 }
@@ -298,8 +311,41 @@ void loop()
 			analogWrite(PIN_LED_YP, 0);
 		}
 #endif
-	}
 
+#ifdef SHOW_ACC_XY
+		if (nch.acc_x < 512 - 10) {
+			analogWrite(PIN_LED_XN, (512 - nch.acc_x) / 2);
+			analogWrite(PIN_LED_XP, 0);
+		}
+		else if (nch.acc_x > 512 + 10) {
+			analogWrite(PIN_LED_XN, 0);
+			analogWrite(PIN_LED_XP, (nch.acc_x - 512) / 2);
+		}
+		else
+		{
+			analogWrite(PIN_LED_XN, 0);
+			analogWrite(PIN_LED_XP, 0);
+		}
+
+		if (nch.acc_y < 512 - 10) {
+			analogWrite(PIN_LED_YN, (512 - nch.acc_y) / 2);
+			analogWrite(PIN_LED_YP, 0);
+		}
+		else if (nch.acc_y > 512 + 10) {
+			analogWrite(PIN_LED_YN, 0);
+			analogWrite(PIN_LED_YP, (nch.acc_y - 512) / 2);
+		}
+		else {
+			analogWrite(PIN_LED_YN, 0);
+			analogWrite(PIN_LED_YP, 0);
+		}
+#endif
+
+#ifdef SHOW_BTN_CZ
+        digitalWrite(PIN_LED_C, nch.btn_c ? HIGH : LOW);
+        digitalWrite(PIN_LED_Z, nch.btn_z ? HIGH : LOW);
+#endif
+	}
 
 	send_zero (); // send the request for next bytes
 	delay (20);
