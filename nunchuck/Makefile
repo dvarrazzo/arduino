@@ -141,6 +141,8 @@ build: elf hex
 applet/$(TARGET).cpp: $(TARGET).pde
 	test -d applet || mkdir applet
 	echo '#include "WProgram.h"' > applet/$(TARGET).cpp
+	# make error messages refer to the actual .pde file
+	echo '#line 1 "'$(TARGET).pde'"'  >> applet/$(TARGET).cpp
 	cat $(TARGET).pde >> applet/$(TARGET).cpp
 	cat $(ARDUINO)/main.cxx >> applet/$(TARGET).cpp
 
