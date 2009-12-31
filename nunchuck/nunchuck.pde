@@ -78,15 +78,6 @@ void parse_nunchuck_data(uint8_t buffer[], struct s_nunchuck_state_t *out);
 char nunchuk_decode_byte(char x);
 void print_nunchuck(const struct s_nunchuck_state_t *state);
 
-// To work around error: Undefined Reference to `__cxa_pure_virtual'
-// http://zedcode.blogspot.com/2007/02/gcc-c-link-problems-on-small-embedded.html
-extern "C" void __cxa_pure_virtual(void)
-{
-    // call to a pure virtual function happened ... wow, should never happen ... stop
-    while(1)
-        ;
-}
-
 void setup ()
 {
 	Serial.begin (19200);
