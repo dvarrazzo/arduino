@@ -204,8 +204,8 @@ extcoff: $(TARGET).elf
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from library.
-applet/$(TARGET).elf: applet/$(TARGET).cpp applet/core.a 
-	$(CC) $(ALL_CFLAGS) -o $@ applet/$(TARGET).cpp -L. applet/core.a $(LDFLAGS)
+applet/$(TARGET).elf: applet/$(TARGET).o applet/core.a 
+	$(CC) $(ALL_CFLAGS) -o $@ applet/$(TARGET).o -L. applet/core.a $(LDFLAGS)
 
 applet/core.a: $(OBJ)
 	@for i in $(OBJ); do echo $(AR) rcs applet/core.a $$i; $(AR) rcs applet/core.a $$i; done
