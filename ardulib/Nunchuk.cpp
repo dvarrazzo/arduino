@@ -133,7 +133,7 @@ void Nunchuk::sendZero(void)
 
 // Decode data format that original Nunchuk uses with old init sequence. This never worked with
 // other controllers (e.g. wireless Nunchuk from other vendors)
-char Nunchuk::decodeByte(uint8_t x)
+inline char Nunchuk::decodeByte(uint8_t x)
 {
 	#if !USE_NEW_WAY_INIT
 	x = (x ^ 0x17) + 0x17;
