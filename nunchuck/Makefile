@@ -54,7 +54,8 @@ SRC = $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
       $(ARDUINO)/wiring_analog.c $(ARDUINO)/pins_arduino.c \
       $(ARDUINO)/../../libraries/Wire/utility/twi.c
 CXXSRC = $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
-         $(ARDUINO)/Print.cpp $(ARDUINO)/../../libraries/Wire/Wire.cpp
+         $(ARDUINO)/Print.cpp $(ARDUINO)/../../libraries/Wire/Wire.cpp \
+		 ../ardulib/Nunchuk.cpp
 FORMAT = ihex
 
 
