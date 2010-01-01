@@ -46,15 +46,15 @@ class Nunchuk
         int read(void);
         uint8_t readControllerIdent(uint8_t *outbuf);
 
-        inline uint8_t joyX(void) const { return buffer[0]; }
-        inline uint8_t joyY(void) const { return buffer[1]; }
+        uint8_t joyX(void) const;
+        uint8_t joyY(void) const;
 
-        inline int accX(void) const { return (buffer[2] << 2) | ((buffer[5] >> 2) & 3); }
-        inline int accY(void) const { return (buffer[3] << 2) | ((buffer[5] >> 4) & 3); }
-        inline int accZ(void) const { return (buffer[4] << 2) | ((buffer[5] >> 6) & 3); }
+        int accX(void) const;
+        int accY(void) const;
+        int accZ(void) const;
 
-        inline uint8_t btnZ(void) const { return 1 ^ (buffer[5] & 1); }
-        inline uint8_t btnC(void) const { return 1 ^ ((buffer[5] >> 1) & 1); }
+        uint8_t btnZ(void) const;
+        uint8_t btnC(void) const;
 
     private:
         uint8_t buffer[WII_TELEGRAM_LEN]; // array to store nunchuk output
@@ -64,5 +64,42 @@ class Nunchuk
         char decodeByte(uint8_t x);
         void clearTwiInputBuffer(void);
 };
+
+inline uint8_t Nunchuk::joyX(void) const
+{
+    return buffer[0];
+}
+
+inline uint8_t Nunchuk::joyY(void) const
+{
+    return buffer[1];
+}
+
+inline int Nunchuk::accX(void) const
+{
+    return (buffer[2] << 2) | ((buffer[5] >> 2) & 3);
+}
+
+inline int Nunchuk::accY(void) const
+{
+    return (buffer[3] << 2) | ((buffer[5] >> 4) & 3);
+}
+
+inline int Nunchuk::accZ(void) const
+{
+    return (buffer[4] << 2) | ((buffer[5] >> 6) & 3);
+}
+
+
+inline uint8_t Nunchuk::btnZ(void) const
+{
+    return 1 ^ (buffer[5] & 1);
+}
+
+inline uint8_t Nunchuk::btnC(void) const
+{
+    return 1 ^ ((buffer[5] >> 1) & 1);
+}
+
 
 #endif // NUNCHUK_H
