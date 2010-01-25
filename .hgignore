@@ -3,5 +3,6 @@
 ^dice/applet/.*
 ^nunchuk/applet/.*
 ^display/applet/.*
+^test-servo/applet/.*
 ^OttoLed/.*
 ^Blink/.*
