@@ -1,9 +1,6 @@
 .*\.sw[po]$
 .*\.[do]$
-^dice/applet/.*
-^nunchuk/applet/.*
-^display/applet/.*
-^test-servo/applet/.*
+.*/applet/.*
 ^OttoLed/.*
 ^Blink/.*
 .*\.[sb]#[0-9]$
