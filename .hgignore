@@ -6,3 +6,4 @@
 ^test-servo/applet/.*
 ^OttoLed/.*
 ^Blink/.*
+.*\.[sb]#[0-9]$
