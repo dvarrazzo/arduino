@@ -2,11 +2,19 @@
 
 #include "wiring.h" // for pinMode, digitalWrite
 
-ShiftReg::ShiftReg(const pin_t data_pin, const pin_t clock_pin, const pin_t latch_pin)
-    : data_pin(data_pin), clock_pin(clock_pin), latch_pin(latch_pin)
+ShiftReg::ShiftReg()
+    : data_pin(INVALID_PIN), clock_pin(INVALID_PIN), latch_pin(INVALID_PIN)
+{ }
+
+void ShiftReg::attach(pin_t data_pin, pin_t clock_pin, pin_t latch_pin)
 {
+    this->data_pin = data_pin;
     pinMode(data_pin, OUTPUT);
+
+    this->clock_pin = clock_pin;
     pinMode(clock_pin, OUTPUT);
+
+    this->latch_pin = latch_pin;
     pinMode(latch_pin, OUTPUT);
 }
 
