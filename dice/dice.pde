@@ -18,12 +18,13 @@ static const pin_t PIN_LATCH = 4;
 static const pin_t PIN_BUTTON = 5;
 
 static Dice dice;
-static Button button(PIN_BUTTON);
+static Button button;
 static ShiftReg sreg(PIN_DATA, PIN_CLOCK, PIN_LATCH);
 static DiceController controller(&dice, &sreg, &button);
 
 void setup(void)
 {
+    button.attach(PIN_BUTTON);
     pinMode(PIN_BUTTON, INPUT);
 }
 

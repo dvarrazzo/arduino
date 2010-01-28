@@ -22,14 +22,14 @@ void DiceController::update(void)
     switch (dice->state())
     {
         case Dice::Stopped:
-            if (button->is_down())
+            if (button->isDown())
             {
                 dice->set_state(Dice::Rolling);
             }
             break;
 
         case Dice::Rolling:
-            if (button->is_up())
+            if (button->isUp())
             {
                 dice->set_state(Dice::Stopping);
             }
