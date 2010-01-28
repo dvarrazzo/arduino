@@ -30,10 +30,7 @@ void setup(void)
 
 void loop(void)
 {
-    for (;;)
-    {
-        controller.update();
-        delay(10);
-    }
+    controller.update();
+    delay(10);
 }
 
