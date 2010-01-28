@@ -35,7 +35,7 @@
 # $Id$
 
 TARGET = $(notdir $(CURDIR))
-INSTALL_DIR = /home/piro/arduino-0017
+INSTALL_DIR = /opt/arduino-0017
 LIBS_DIR = ..
 PORT = /dev/ttyUSB0
 UPLOAD_RATE = 57600
