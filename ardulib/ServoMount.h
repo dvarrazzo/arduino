@@ -15,6 +15,8 @@ class ServoMount
         void setTrim(int trim_us);
         void reverse();
 
+        static const float SPEED_MIN = -1.0;
+        static const float SPEED_MAX =  1.0;
         void setSpeed(float speed);
         void setUSec(int us);
 
@@ -22,17 +24,17 @@ class ServoMount
         void goRamp();
 
     protected:
+        int speedToUSec(float speed);
+
+    protected:
         Servo servo;
+
+    private:
         int min_us;
         int max_us;
         int trim_us;
-        int8_t direction;
+        char direction;
 
-        static const float SPEED_MIN = -1.0;
-        static const float SPEED_MAX =  1.0;
-        int speedToUSec(float speed);
-
-    private:
         static const long NO_RAMP = -1;
         int ramp_start;
         int ramp_end;

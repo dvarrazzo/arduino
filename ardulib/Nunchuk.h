@@ -65,6 +65,7 @@ class Nunchuk
         void clearTwiInputBuffer(void);
 };
 
+
 inline uint8_t Nunchuk::joyX(void) const
 {
     return buffer[0];

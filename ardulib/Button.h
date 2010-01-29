@@ -19,7 +19,7 @@ class Button
         bool isPressed() const;
         bool isReleased() const;
 
-    protected:
+    private:
        pin_t pin;
        bool prev_val;
        bool curr_val;

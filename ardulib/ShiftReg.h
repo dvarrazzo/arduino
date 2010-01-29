@@ -11,7 +11,7 @@ class ShiftReg
 
         void write(const uint8_t n);
 
-    protected:
+    private:
         pin_t data_pin;
         pin_t clock_pin;
         pin_t latch_pin;

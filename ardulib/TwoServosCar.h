@@ -37,7 +37,7 @@ class TwoServosCar
         Button enable_button;
         Pot trim_pot;
 
-    protected:
+    private:
         bool enabled;
 };
 

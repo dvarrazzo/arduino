@@ -14,7 +14,7 @@ class Pot
         void read();
         int getValue() const;
 
-    protected:
+    private:
        pin_t pin;
        int value;
 };
