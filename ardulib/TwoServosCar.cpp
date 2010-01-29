@@ -16,11 +16,13 @@ void TwoServosCar::setRange(int min_us, int max_us)
 void TwoServosCar::pulse()
 {
     // Check if the car must be stopped
-    if (enable_button.isAttached()) {
+    if (enable_button.isAttached())
+    {
         enable_button.read();
         if (enable_button.isPressed())
         {
-            if (enabled) {
+            if (enabled)
+            {
                 setSpeed(0.0);
             }
             enabled = !enabled;
@@ -46,7 +48,10 @@ void TwoServosCar::pulse()
 
 void TwoServosCar::setSpeed(float speed_left, float speed_right)
 {
-    if (!enabled) { return; }
+    if (!enabled)
+    {
+        return;
+    }
 
     leftServo().setSpeed(speed_left);
     rightServo().setSpeed(speed_right);
@@ -54,7 +59,10 @@ void TwoServosCar::setSpeed(float speed_left, float speed_right)
 
 void TwoServosCar::setUSec(int left_us, int right_us)
 {
-    if (!enabled) { return; }
+    if (!enabled)
+    {
+        return;
+    }
 
     leftServo().setUSec(left_us);
     rightServo().setUSec(right_us);

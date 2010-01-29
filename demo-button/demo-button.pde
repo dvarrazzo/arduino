@@ -7,9 +7,9 @@ static const pin_t button_pin = 5;
 
 static Button button;
 
-void setup ()
+void setup()
 {
-	Serial.begin(19200);
+    Serial.begin(19200);
     button.attach(button_pin);
 }
 

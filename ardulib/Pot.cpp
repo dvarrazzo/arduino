@@ -4,7 +4,8 @@
 
 void Pot::read()
 {
-    if (!isAttached()) {
+    if (!isAttached())
+    {
         return;
     }
 

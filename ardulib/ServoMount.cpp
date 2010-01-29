@@ -40,17 +40,20 @@ void ServoMount::makeRamp(long length_ms, float speed)
 
 void ServoMount::goRamp()
 {
-    if (NO_RAMP == ramp_t0) {
+    if (NO_RAMP == ramp_t0)
+    {
         return;
     }
 
     long t = millis();
     int us;
-    if (t < ramp_tf) {
+    if (t < ramp_tf)
+    {
         float alpha = (float)(t - ramp_t0) / (ramp_tf - ramp_t0);
         us = alpha * (ramp_end - ramp_start) + ramp_start;
     }
-    else {
+    else
+    {
         us = ramp_end;
         ramp_t0 = NO_RAMP;
     }

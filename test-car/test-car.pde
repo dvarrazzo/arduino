@@ -15,9 +15,9 @@ static const pin_t speed_pot_pin = 4; // analog
 static TwoServosCar car;
 static Pot speed_pot;
 
-void setup ()
+void setup()
 {
-	Serial.begin(19200);
+    Serial.begin(19200);
 
     car.attach(left_servo_pin, right_servo_pin);
     car.attachEnableButton(start_button_pin);

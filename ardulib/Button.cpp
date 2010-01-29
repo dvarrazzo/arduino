@@ -10,7 +10,8 @@ void Button::attach(pin_t pin)
 
 void Button::read()
 {
-    if (!isAttached()) {
+    if (!isAttached())
+    {
         return;
     }
 
