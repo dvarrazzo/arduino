@@ -33,6 +33,7 @@ class ServoMount
         int speedToUSec(float speed);
 
     private:
+        static const long NO_RAMP = -1;
         int ramp_start;
         int ramp_end;
         long ramp_t0;

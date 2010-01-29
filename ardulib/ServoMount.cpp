@@ -3,7 +3,7 @@
 #include <wiring.h>             // for millis()
 
 ServoMount::ServoMount()
-    : direction(1), ramp_t0(-1)
+    : direction(1), ramp_t0(NO_RAMP)
 { }
 
 void ServoMount::attach(pin_t pin)
@@ -56,7 +56,7 @@ void ServoMount::makeRamp(long length_ms, float speed)
 
 void ServoMount::goRamp()
 {
-    if (ramp_t0 < 0) {
+    if (NO_RAMP == ramp_t0) {
         return;
     }
 
@@ -66,10 +66,9 @@ void ServoMount::goRamp()
         float alpha = (float)(t - ramp_t0) / (ramp_tf - ramp_t0);
         us = alpha * (ramp_end - ramp_start) + ramp_start;
     }
-    else
-    {
+    else {
         us = ramp_end;
-        ramp_t0 = -1;
+        ramp_t0 = NO_RAMP;
     }
 
     setUSec(us);
