@@ -3,6 +3,8 @@
 
 #include "ardulib/utils.h"
 
+#include "wiring.h" // for pinMode, digitalRead
+
 class Button
 {
     public:
@@ -22,5 +24,41 @@ class Button
        bool prev_val;
        bool curr_val;
 };
+
+
+inline
+Button::Button()
+    : pin(INVALID_PIN)
+{ }
+
+inline
+bool Button::isAttached() const
+{
+    return pin != INVALID_PIN;
+}
+
+inline
+bool Button::isDown() const
+{
+    return curr_val;
+}
+
+inline
+bool Button::isUp() const
+{
+    return !curr_val;
+}
+
+inline
+bool Button::isPressed() const
+{
+    return curr_val && !prev_val;
+}
+
+inline
+bool Button::isReleased() const
+{
+    return !curr_val && prev_val;
+}
 
 #endif // BUTTON_H

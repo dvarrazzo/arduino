@@ -19,4 +19,27 @@ class Pot
        int value;
 };
 
+inline
+Pot::Pot()
+    : pin(INVALID_PIN)
+{ }
+
+inline
+void Pot::attach(pin_t pin)
+{
+    this->pin = pin;
+}
+
+inline
+bool Pot::isAttached() const
+{
+    return pin != INVALID_PIN;
+}
+
+inline
+int Pot::getValue() const
+{
+    return value;
+}
+
 #endif // POT_H

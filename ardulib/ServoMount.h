@@ -40,5 +40,25 @@ class ServoMount
         long ramp_tf;
 };
 
+
+inline
+void ServoMount::setRange(int min_us, int max_us)
+{
+    this->min_us = min_us;
+    this->max_us = max_us;
+}
+
+inline
+void ServoMount::reverse()
+{
+    direction *= -1;
+}
+
+inline
+void ServoMount::setTrim(int trim_us)
+{
+    this->trim_us = trim_us;
+}
+
 #endif // SERVO_MOUNT_H
 

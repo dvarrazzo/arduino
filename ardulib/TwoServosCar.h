@@ -42,14 +42,60 @@ class TwoServosCar
 };
 
 
-inline ServoMount& TwoServosCar::leftServo()
+inline
+ServoMount& TwoServosCar::leftServo()
 {
     return servos[0];
 }
 
-inline ServoMount& TwoServosCar::rightServo()
+inline
+ServoMount& TwoServosCar::rightServo()
 {
     return servos[1];
 }
 
+inline
+void TwoServosCar::attach(pin_t pin_left, pin_t pin_right)
+{
+    leftServo().attach(pin_left);
+    rightServo().attach(pin_right);
+}
+
+inline
+void TwoServosCar::attachEnableButton(pin_t pin)
+{
+    enable_button.attach(pin);
+}
+
+inline
+void TwoServosCar::attachTrimPot(pin_t pin)
+{
+    trim_pot.attach(pin);
+}
+
+inline
+void TwoServosCar::reverseServos()
+{
+    leftServo().reverse();
+    rightServo().reverse();
+}
+
+inline
+void TwoServosCar::setSpeed(float speed)
+{
+    setSpeed(speed, speed);
+}
+
+inline
+void TwoServosCar::accelerate(unsigned long length_ms, float speed)
+{
+    accelerate(length_ms, speed, speed);
+}
+
+inline
+void TwoServosCar::accelerate(unsigned long length_ms, float speed_left, float speed_right)
+{
+    leftServo().makeRamp(length_ms, speed_left);
+    rightServo().makeRamp(length_ms, speed_right);
+}
 #endif // TWO_SERVOS_CAR_H

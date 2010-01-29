@@ -17,4 +17,10 @@ class ShiftReg
         pin_t latch_pin;
 };
 
+
+inline
+ShiftReg::ShiftReg()
+    : data_pin(INVALID_PIN), clock_pin(INVALID_PIN), latch_pin(INVALID_PIN)
+{ }
+
 #endif // SHIFTREG_H

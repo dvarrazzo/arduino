@@ -11,22 +11,6 @@ void ServoMount::attach(pin_t pin)
     servo.attach(pin);
 }
 
-void ServoMount::setRange(int min_us, int max_us)
-{
-    this->min_us = min_us;
-    this->max_us = max_us;
-}
-
-void ServoMount::reverse()
-{
-    direction *= -1;
-}
-
-void ServoMount::setTrim(int trim_us)
-{
-    this->trim_us = trim_us;
-}
-
 void ServoMount::setSpeed(float speed)
 {
     int us = speedToUSec(speed);

@@ -6,33 +6,11 @@ TwoServosCar::TwoServosCar()
     rightServo().reverse();
 }
 
-void TwoServosCar::attach(pin_t pin_left, pin_t pin_right)
-{
-    leftServo().attach(pin_left);
-    rightServo().attach(pin_right);
-}
-
-void TwoServosCar::attachEnableButton(pin_t pin)
-{
-    enable_button.attach(pin);
-}
-
-void TwoServosCar::attachTrimPot(pin_t pin)
-{
-    trim_pot.attach(pin);
-}
-
 void TwoServosCar::setRange(int min_us, int max_us)
 {
     leftServo().setRange(min_us, max_us);
     rightServo().setRange(min_us, max_us);
     setSpeed(0.0);
-}
-
-void TwoServosCar::reverseServos()
-{
-    leftServo().reverse();
-    rightServo().reverse();
 }
 
 void TwoServosCar::pulse()
@@ -66,11 +44,6 @@ void TwoServosCar::pulse()
     }
 }
 
-void TwoServosCar::setSpeed(float speed)
-{
-    setSpeed(speed, speed);
-}
-
 void TwoServosCar::setSpeed(float speed_left, float speed_right)
 {
     if (!enabled) { return; }
@@ -85,15 +58,4 @@ void TwoServosCar::setUSec(int left_us, int right_us)
 
     leftServo().setUSec(left_us);
     rightServo().setUSec(right_us);
-}
-
-void TwoServosCar::accelerate(unsigned long length_ms, float speed)
-{
-    accelerate(length_ms, speed, speed);
-}
-
-void TwoServosCar::accelerate(unsigned long length_ms, float speed_left, float speed_right)
-{
-    leftServo().makeRamp(length_ms, speed_left);
-    rightServo().makeRamp(length_ms, speed_right);
 }
