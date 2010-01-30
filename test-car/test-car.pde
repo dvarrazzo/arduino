@@ -70,5 +70,5 @@ void loop_ramp()
 void loop()
 {
     // loop_ramp();
-    loop_trim();
+    // loop_trim();
 }
