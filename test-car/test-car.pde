@@ -31,7 +31,9 @@ void setup()
 void loop_trim()
 {
     speed_pot.read();
-    servo_speed_t speed = (speed_pot.getValue() - 512) * 2;
+    servo_speed_t speed = (long)speed_pot.getValue()
+        * (ServoMount::SPEED_MAX - ServoMount::SPEED_MIN)
+        / 1024 + ServoMount::SPEED_MIN;
 
     car.setSpeed(speed);
     car.pulse();
