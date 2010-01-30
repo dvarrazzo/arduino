@@ -1,6 +1,6 @@
 #include "ardulib/ServoMount.h"
 
-#include <wiring.h>             // for millis()
+#include <wiring.h>             // for millis(), constrain()
 
 ServoMount::ServoMount()
     : direction(1), ramp_t0(NO_RAMP)
@@ -11,31 +11,39 @@ void ServoMount::attach(pin_t pin)
     servo.attach(pin);
 }
 
-void ServoMount::setSpeed(float speed)
+void ServoMount::setSpeed(servo_speed_t speed)
 {
+    speed = constrain(speed, SPEED_MIN, SPEED_MAX);
     int us = speedToUSec(speed);
     setUSec(us);
 }
 
 void ServoMount::setUSec(int us)
 {
-    us += trim_us;
-    servo.writeMicroseconds(us);
+    servo.writeMicroseconds(us + trim_us);
 }
 
-int ServoMount::speedToUSec(float speed)
+int ServoMount::getUSec()
+{
+    return servo.readMicroseconds() - trim_us;
+}
+
+int ServoMount::speedToUSec(servo_speed_t speed)
 {
     speed *= direction;
-    float alpha = (speed - SPEED_MIN) / (SPEED_MAX - SPEED_MIN);
-    return alpha * (max_us - min_us) + min_us;
+    return (long)(speed - SPEED_MIN) * (max_us - min_us)
+        / (SPEED_MAX - SPEED_MIN) + min_us;
 }
 
-void ServoMount::makeRamp(long length_ms, float speed)
+static const long RAMP_SCALE = 1024;
+
+void ServoMount::makeRamp(long length_ms, servo_speed_t speed)
 {
     ramp_t0 = millis();
-    ramp_tf = ramp_t0 + length_ms;
-    ramp_start = servo.readMicroseconds();
-    ramp_end = speedToUSec(speed);
+    ramp_start_us = getUSec();
+    ramp_end_us = speedToUSec(speed);
+    ramp_m = ((ramp_end_us - ramp_start_us) * RAMP_SCALE) / length_ms;
+    ramp_length_ms = length_ms;
 }
 
 void ServoMount::goRamp()
@@ -45,16 +53,16 @@ void ServoMount::goRamp()
         return;
     }
 
-    long t = millis();
+    long t = millis() - ramp_t0;
+
     int us;
-    if (t < ramp_tf)
+    if (t < ramp_length_ms)
     {
-        float alpha = (float)(t - ramp_t0) / (ramp_tf - ramp_t0);
-        us = alpha * (ramp_end - ramp_start) + ramp_start;
+        us = ((ramp_m * t) / RAMP_SCALE) + ramp_start_us;
     }
     else
     {
-        us = ramp_end;
+        us = ramp_end_us;
         ramp_t0 = NO_RAMP;
     }
 

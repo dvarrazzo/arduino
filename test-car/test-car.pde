@@ -31,7 +31,7 @@ void setup()
 void loop_trim()
 {
     speed_pot.read();
-    float speed = (speed_pot.getValue() - 512) / 512.0;
+    servo_speed_t speed = (speed_pot.getValue() - 512) * 2;
 
     car.setSpeed(speed);
     car.pulse();
@@ -55,13 +55,13 @@ void keep_for(int ms)
 
 void loop_ramp()
 {
-    car.accelerate(1000, 1.0);
+    car.accelerate(1000, ServoMount::SPEED_MAX);
     keep_for(1000);
-    car.accelerate(1000, 0.0);
+    car.accelerate(1000, 0);
     keep_for(1000);
-    car.accelerate(1000, 1.0, -1.0);
+    car.accelerate(1000, ServoMount::SPEED_MAX, ServoMount::SPEED_MIN);
     keep_for(1000);
-    car.accelerate(1000, 0.0);
+    car.accelerate(1000, 0);
     keep_for(1000);
 }
 

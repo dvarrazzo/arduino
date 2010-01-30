@@ -46,7 +46,7 @@ void TwoServosCar::pulse()
     }
 }
 
-void TwoServosCar::setSpeed(float speed_left, float speed_right)
+void TwoServosCar::setSpeed(servo_speed_t speed_left, servo_speed_t speed_right)
 {
     if (!enabled)
     {

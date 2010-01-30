@@ -5,6 +5,8 @@
 
 #include <Servo.h>
 
+typedef int servo_speed_t;
+
 class ServoMount
 {
     public:
@@ -15,16 +17,18 @@ class ServoMount
         void setTrim(int trim_us);
         void reverse();
 
-        static const float SPEED_MIN = -1.0;
-        static const float SPEED_MAX =  1.0;
-        void setSpeed(float speed);
+        static const servo_speed_t SPEED_MIN = -1000;
+        static const servo_speed_t SPEED_MAX = 1000;
+        void setSpeed(servo_speed_t speed);
+
+        int getUSec();
         void setUSec(int us);
 
-        void makeRamp(long length_ms, float speed);
+        void makeRamp(long length_ms, servo_speed_t speed);
         void goRamp();
 
     protected:
-        int speedToUSec(float speed);
+        int speedToUSec(servo_speed_t speed);
 
     protected:
         Servo servo;
@@ -36,10 +40,11 @@ class ServoMount
         char direction;
 
         static const long NO_RAMP = -1;
-        int ramp_start;
-        int ramp_end;
+        int ramp_start_us;
+        int ramp_end_us;
         long ramp_t0;
-        long ramp_tf;
+        long ramp_length_ms;
+        long ramp_m;
 };
 
 

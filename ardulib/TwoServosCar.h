@@ -20,10 +20,10 @@ class TwoServosCar
 
         void pulse();
 
-        void setSpeed(float speed);
-        void setSpeed(float speed_left, float speed_right);
-        void accelerate(unsigned long length_ms, float speed);
-        void accelerate(unsigned long length_ms, float speed_left, float speed_right);
+        void setSpeed(servo_speed_t speed);
+        void setSpeed(servo_speed_t speed_left, servo_speed_t speed_right);
+        void accelerate(unsigned long length_ms, servo_speed_t speed);
+        void accelerate(unsigned long length_ms, servo_speed_t speed_left, servo_speed_t speed_right);
 
         // should be for debug only
         void setUSec(int left_us, int right_us);
@@ -81,21 +81,22 @@ void TwoServosCar::reverseServos()
 }
 
 inline
-void TwoServosCar::setSpeed(float speed)
+void TwoServosCar::setSpeed(servo_speed_t speed)
 {
     setSpeed(speed, speed);
 }
 
 inline
-void TwoServosCar::accelerate(unsigned long length_ms, float speed)
+void TwoServosCar::accelerate(unsigned long length_ms, servo_speed_t speed)
 {
     accelerate(length_ms, speed, speed);
 }
 
 inline
-void TwoServosCar::accelerate(unsigned long length_ms, float speed_left, float speed_right)
+void TwoServosCar::accelerate(unsigned long length_ms, servo_speed_t speed_left, servo_speed_t speed_right)
 {
     leftServo().makeRamp(length_ms, speed_left);
     rightServo().makeRamp(length_ms, speed_right);
 }
+
 #endif // TWO_SERVOS_CAR_H
