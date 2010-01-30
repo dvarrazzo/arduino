@@ -105,6 +105,10 @@ CXXFLAGS = $(CDEFS) $(CINCS) -O$(OPT)
 #ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs 
 LDFLAGS = -lm
 
+# Tell the compiler to drop unused code.
+CXXFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections
+LDFLAGS += -Wl,--gc-sections
 
 # Programming support using avrdude. Settings and variables.
 AVRDUDE_PORT = $(PORT)
