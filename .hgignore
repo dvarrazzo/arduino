@@ -4,3 +4,5 @@
 ^OttoLed/.*
 ^Blink/.*
 .*\.[sb]#[0-9]$
+^thermo/server/lib
+^thermo/server/thermo/\.google_appengine
