@@ -16,18 +16,18 @@ def main():
         if "\n" in buf:
             ts = datetime.now()
             s = "".join(buf)
-            temp, rest = s.split("\n", 1)
+            value, rest = s.split("\n", 1)
             buf[:] = [rest]
 
             try:
-                temp = float(temp)
+                value = float(value)
             except Exception, e:
                 print "error reading:", e
             else:
-                print temp
+                print value
                 if ts.minute != minute:
                     minute = ts.minute
-                    send_temp(opt, ts, temp)
+                    send_value(opt, ts, value)
 
 def parse_options():
     class O:
@@ -37,17 +37,17 @@ def parse_options():
     o.url = sys.argv[1]
     return o
 
-def send_temp(opt, ts, temp):
-    print "send", temp
+def send_value(opt, ts, value):
+    print "send", value
     d = {
         'ts': ts.strftime("%Y-%m-%d %H:%M:%S"),
-        'temp': str(temp) }
+        'value': str(value) }
     try:
         urllib.urlopen(opt.url, urllib.urlencode(d)).read()
     except Exception, e:
         print "error sending", e
 
-    print >>open("temp.log", 'a'), d['ts'], d['temp']
+    print >>open("values.log", 'a'), d['ts'], d['value']
 
 if __name__ == '__main__':
     try:

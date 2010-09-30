@@ -8,7 +8,8 @@ PYTHON = python${PYTHON_VER}
 .PHONY: serve shell upload rollback check install_lib
 
 serve:
-	cd thermo && ${PYTHON} manage.py runserver
+	# cd thermo && ${PYTHON} manage.py runserver
+	python ./lib/google_appengine/dev_appserver.py thermo/
 
 check:
 	cd thermo && ${PYTHON} manage.py test -v2 app

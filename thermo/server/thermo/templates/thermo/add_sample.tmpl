@@ -1,0 +1,20 @@
+<form action="." method="post">
+  <label for="device">Device</label>
+  <select name="device">
+    {% for device in devices %}
+    <option value="{{ device.key }}">{{ device.name }}</option>
+    {% endfor %}
+  </select>
+  <br/>
+
+  <label for="ts">Date/Time</label>
+  <input type="text" name="ts" />
+  <br/>
+
+  <label for="value">Value</label>
+  <input type="text" name="value" />
+  <br/>
+
+  <input type="submit" value="Submit" />
+
+</form>

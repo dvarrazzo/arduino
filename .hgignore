@@ -1,5 +1,6 @@
 .*\.sw[po]$
 .*\.[do]$
+.*\.py[cdw]$
 .*/applet/.*
 ^OttoLed/.*
 ^Blink/.*
