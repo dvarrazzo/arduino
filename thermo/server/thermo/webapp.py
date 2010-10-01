@@ -1,3 +1,4 @@
+import urllib
 from datetime import datetime, timedelta
 
 from google.appengine.ext import db
@@ -61,6 +62,7 @@ class ChartPage(webapp.RequestHandler):
     def get(self, date, device_keys):
 
         try:
+            device_keys = urllib.unquote(device_keys)
             devices = map(Device.get, device_keys.split(","))
         except Exception, e:
             logger.warn("can't fetch device: %s", e)
