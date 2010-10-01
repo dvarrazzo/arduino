@@ -1,3 +1,9 @@
+{% extends "base.tmpl" %}
+
+{% block title %}New samples{% endblock %}
+
+{% block content %}
+
 {% if msg %}
   <div class="msg">{{ msg }}</div>
 {% endif %}
@@ -31,3 +37,5 @@
   <input type="submit" value="Submit" />
 
 </form>
+
+{% endblock %}

@@ -1,3 +1,9 @@
+{% extends "base.tmpl" %}
+
+{% block title %}Measures for {{ date }}{% endblock %}
+
+{% block content %}
+
 {% if chart %}
   <div class="date">
     Measures for {{ date }}
@@ -7,3 +13,5 @@
 {% else %}
   <p>No measure for {{ date }}.</p>
 {% endif %}
+
+{% endblock %}

@@ -1,3 +1,9 @@
+{% extends "base.tmpl" %}
+
+{% block title %}Device selection{% endblock %}
+
+{% block content %}
+
 <p>Available devices:</p>
 <ul class="devices">
   {% for device in devices %}
@@ -7,3 +13,4 @@
   {% endfor %}
 </ul>
 
+{% endblock %}
