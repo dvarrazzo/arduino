@@ -1,10 +1,16 @@
 #!/usr/bin/env python
+"""Read from the serial and emit one ts/value per minute.
+
+Log messages on stderr.
+"""
 
 import sys
 import serial
-import urllib
 from datetime import datetime, timedelta
-from urllib2 import urlopen
+
+import logging
+logging.basicConfig()
+logger = logging.getLogger()
 
 def main():
     opt = parse_options()
@@ -22,32 +28,19 @@ def main():
             try:
                 value = float(value)
             except Exception, e:
-                print "error reading:", e
+                logger.error("error reading: %s", e)
             else:
-                print value
+                logger.debug("read value: %s", value)
                 if ts.minute != minute:
                     minute = ts.minute
                     send_value(opt, ts, value)
 
 def parse_options():
-    class O:
-        pass
-
-    o = O()
-    o.url = sys.argv[1]
-    return o
+    return None
 
 def send_value(opt, ts, value):
-    print "send", value
-    d = {
-        'ts': ts.strftime("%Y-%m-%d %H:%M:%S"),
-        'value': str(value) }
-    try:
-        urllib.urlopen(opt.url, urllib.urlencode(d)).read()
-    except Exception, e:
-        print "error sending", e
-
-    print >>open("values.log", 'a'), d['ts'], d['value']
+    logger.debug("sending value: %s", value)
+    print ts.strftime("%Y-%m-%d %H:%M:%S"), value
 
 if __name__ == '__main__':
     try:
