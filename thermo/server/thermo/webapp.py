@@ -10,18 +10,47 @@ from model import Device, Sample
 class PostSample(webapp.RequestHandler):
     def get(self):
         devices = Device.all()
+        msg = self.request.get('msg')
         self.response.out.write(template.render(
             'templates/thermo/add_sample.tmpl',
-            {'devices': devices}))
+            {'devices': devices, 'msg': msg}))
 
     def post(self):
         device = Device.get(self.request.get('device'))
-        ts = datetime.strptime(self.request.get('ts'), "%Y-%m-%d %H:%M:%S")
-        value = float(self.request.get('value'))
+
+        if self.request.get('data').strip():
+            self._post_data(device)
+        else:
+            self._post_sample(device)
+
+    def _post_sample(self, device):
+        ts = self._parse_ts(self.request.get('ts'))
+        value = self._parse_value(self.request.get('value'))
 
         s = Sample(device=device, ts=ts, value=value)
         s.put()
         self.redirect("/sample/%s/" % s.key())
+
+    def _post_data(self, device):
+        data = []
+        for line in self.request.get('data').splitlines():
+            date, time, value = line.split()
+            ts = self._parse_ts(date + " " + time)
+            value = self._parse_value(value)
+            data.append((ts, value))
+
+        for ts, value in data:
+            s = Sample(device=device, ts=ts, value=value)
+            s.put()
+
+        self.redirect(
+            "/sample/new/?msg=%d+samples+added." % len(data))
+
+    def _parse_ts(self, s):
+        return datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+
+    def _parse_value(self, s):
+        return float(s)
 
 class MainPage(webapp.RequestHandler):
     def get(self):

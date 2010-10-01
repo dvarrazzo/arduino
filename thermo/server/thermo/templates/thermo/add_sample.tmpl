@@ -1,3 +1,7 @@
+{% if msg %}
+  <div class="msg">{{ msg }}</div>
+{% endif %}
+
 <form action="." method="post">
   <label for="device">Device</label>
   <select name="device">
@@ -13,6 +17,15 @@
 
   <label for="value">Value</label>
   <input type="text" name="value" />
+  <br/>
+
+  <input type="submit" value="Submit" />
+
+  <hr/>
+
+  <label for="data">Or paste here a chunk of data</label>
+  <br/>
+  <textarea name="data" cols="80" rows="20"></textarea>
   <br/>
 
   <input type="submit" value="Submit" />
