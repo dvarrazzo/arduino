@@ -7,6 +7,9 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from model import Device, Sample
 
+import logging
+logger = logging.getLogger("thermo.webapp")
+
 class PostSample(webapp.RequestHandler):
     def get(self):
         devices = Device.all()
@@ -52,16 +55,40 @@ class PostSample(webapp.RequestHandler):
     def _parse_value(self, s):
         return float(s)
 
+import charts
+
+class ChartPage(webapp.RequestHandler):
+    def get(self, date, device_keys):
+
+        try:
+            devices = map(Device.get, device_keys.split(","))
+        except Exception, e:
+            logger.warn("can't fetch device: %s", e)
+            return self.error(404)
+
+        try:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+        except Exception, e:
+            logger.warn("bad date: %s: %s", date, e)
+            return self.error(404)
+
+        any = False
+        chart = charts.make_chart(self.request)
+        for device in devices:
+            any = charts.add_day_data(chart, device, date) or any
+
+        self.response.out.write(template.render(
+            'templates/thermo/chart.tmpl',
+            {'devices': devices, 'chart': any and chart, 'date': date}))
+
 class MainPage(webapp.RequestHandler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        samples = db.GqlQuery("""
-            SELECT * FROM Sample WHERE ts > :1
-            ORDER BY ts""",
-            datetime.now() - timedelta(hours=24))
+        devices = Device.all()
+        date = datetime.now().date()
+        self.response.out.write(template.render(
+            'templates/thermo/main.tmpl',
+            {'devices': devices, 'date': date}))
 
-        for s in samples:
-           self.response.out.write("%s %s\n" % (s.ts, s.value))
 
 class ViewSample(webapp.RequestHandler):
     def get(self, key):
@@ -75,6 +102,7 @@ app = webapp.WSGIApplication([
     ('/', MainPage),
     ('/sample/new/', PostSample),
     ('/sample/([^/]+)/', ViewSample),
+    ('/chart/([^/]+)/([^/]+)/', ChartPage),
     ],
     debug=True)
 

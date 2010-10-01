@@ -23,8 +23,18 @@ upload:
 rollback:
 	cd thermo && ${PYTHON} manage.py rollback
 
-install_lib:
+install_lib: install_appengine install_chart
+
+install_appengine: thermo/.google_appengine
+
+install_chart: thermo/pygooglechart.py
+
+thermo/.google_appengine:
 	wget http://googleappengine.googlecode.com/files/google_appengine_${APPENGINE_VER}.zip
 	unzip -d lib google_appengine_${APPENGINE_VER}.zip
 	rm google_appengine_${APPENGINE_VER}.zip
 	(cd thermo && ln -s ../lib/google_appengine .google_appengine)
+
+thermo/pygooglechart.py:
+	PYTHONPATH=lib easy_install -d lib pygooglechart
+	(cd thermo/ && ln -sf `find ../lib/ -name pygooglechart.py`)

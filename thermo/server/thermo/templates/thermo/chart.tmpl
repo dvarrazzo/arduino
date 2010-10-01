@@ -1,0 +1,9 @@
+{% if chart %}
+  <div class="date">
+    Measures for {{ date }}
+  </div>
+
+  <img class="sample" src="{{ chart.get_url }}" />
+{% else %}
+  <p>No measure for {{ date }}.</p>
+{% endif %}

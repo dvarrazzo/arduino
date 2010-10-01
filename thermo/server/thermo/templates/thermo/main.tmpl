@@ -1,0 +1,9 @@
+<p>Available devices:</p>
+<ul class="devices">
+  {% for device in devices %}
+  <li>
+    <a href="/chart/{{ date }}/{{ device.key }}/">{{ device.name }}</a>
+  </li>
+  {% endfor %}
+</ul>
+
