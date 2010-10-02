@@ -18,7 +18,7 @@ shell:
 	cd thermo && ${PYTHON} manage.py shell
 
 upload:
-	cd thermo && ${PYTHON} manage.py update -v -e ${EMAIL}
+	python ./lib/google_appengine/appcfg.py -e ${EMAIL} update thermo/
 
 rollback:
 	cd thermo && ${PYTHON} manage.py rollback
