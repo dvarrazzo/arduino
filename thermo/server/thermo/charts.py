@@ -19,6 +19,10 @@ def make_chart(request):
 
 def finish_chart(chart):
     chart.set_legend([d.name for d in chart.devices])
+
+    if not chart._ranges:
+        return
+
     min_x = min(t[0] for t in chart._ranges)
     max_x = max(t[1] for t in chart._ranges)
     min_y = min(t[2] for t in chart._ranges)

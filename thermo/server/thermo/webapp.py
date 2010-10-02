@@ -56,6 +56,34 @@ class PostSample(webapp.RequestHandler):
     def _parse_value(self, s):
         return float(s)
 
+class NewDevice(webapp.RequestHandler):
+    def get(self):
+        data = self._request_data()
+        self.response.out.write(template.render(
+            'templates/thermo/new_device.tmpl',
+            {'data': data}))
+
+    def post(self):
+        data = self._request_data()
+        try:
+            device = Device(**data)
+            device.put()
+        except Exception, e:
+            self.response.out.write(template.render(
+                'templates/thermo/new_device.tmpl',
+                {'data': data, 'msg': "error: %s" % e}))
+        else:
+            self.redirect("/")
+
+
+
+    def _request_data(self):
+        rv = {}
+        for k in ('name', 'timezone', 'description'):
+            rv[k] = self.request.get(k)
+
+        return rv
+
 import charts
 
 class ChartPage(webapp.RequestHandler):
@@ -107,6 +135,7 @@ app = webapp.WSGIApplication([
     ('/sample/new/', PostSample),
     ('/sample/([^/]+)/', ViewSample),
     ('/chart/([^/]+)/([^/]+)/', ChartPage),
+    ('/device/new/', NewDevice),
     ],
     debug=True)
 
