@@ -79,6 +79,8 @@ class ChartPage(webapp.RequestHandler):
         for device in devices:
             any = charts.add_day_data(chart, device, date) or any
 
+        charts.finish_chart(chart)
+
         self.response.out.write(template.render(
             'templates/thermo/chart.tmpl',
             {'devices': devices, 'chart': any and chart, 'date': date}))
