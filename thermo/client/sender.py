@@ -11,7 +11,7 @@ import urllib
 from urllib2 import urlopen
 
 import logging
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 def main():
