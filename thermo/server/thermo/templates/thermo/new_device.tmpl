@@ -1,0 +1,30 @@
+{% extends "base.tmpl" %}
+
+{% block title %}New device{% endblock %}
+
+{% block content %}
+
+{% if msg %}
+  <div class="msg">{{ msg }}</div>
+{% endif %}
+
+<form action="." method="post">
+  <label for="name">Name</label>
+  <input type="text" name="name" value="{{ data.name }}"/>
+  <br/>
+
+  <label for="timezone">Timezone</label>
+  <input type="text" name="timezone" value="{{ data.timezone }}"/>
+  <br/>
+
+  <label for="description">Description</label>
+  <br/>
+  <textarea name="data" cols="60" rows="10">{{ data.description }}</textarea>
+  <br/>
+
+  <input type="submit" value="Submit" />
+
+</form>
+
+{% endblock %}
+

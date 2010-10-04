@@ -37,14 +37,11 @@ def finish_chart(chart):
 
 
 def add_day_data(chart, device, date):
-    step = 5
+    step = 10
     x, y = fetch_data(device, date, step)
     if not x:
         return False
 
-    if len(x) < 10:
-        logger.warn('x: %s', x)
-        logger.warn('y: %s', y)
     chart.add_data(x)
     chart.add_data(y)
     chart._ranges.append((
