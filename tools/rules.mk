@@ -5,6 +5,7 @@
 TARGET = $(notdir $(CURDIR))
 
 ARDUINO = $(INSTALL_DIR)/hardware/cores/arduino
+ARDUINO_LIBS_DIR = $(INSTALL_DIR)/hardware/libraries/
 AVR_TOOLS_PATH = /usr/bin
 
 CXXSRC += applet/$(TARGET).cpp
@@ -26,20 +27,20 @@ CXXSRC += $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
 # Optional chunks of functionalities
 #
 ifdef HAVE_SERVO
-CXXSRC += $(ARDUINO)/../../libraries/Servo/Servo.cpp
-CXXINCS += -I$(ARDUINO)/../../libraries/Servo
+CXXSRC += $(ARDUINO_LIBS_DIR)/Servo/Servo.cpp
+CXXINCS += -I$(ARDUINO_LIBS_DIR)/Servo
 endif
 
 ifdef HAVE_WIRE
-SRC += $(ARDUINO)/../../libraries/Wire/utility/twi.c
-CXXSRC += $(ARDUINO)/../../libraries/Wire/Wire.cpp
-CXXINCS += -I$(ARDUINO)/../../libraries/Wire/ \
-	-I$(ARDUINO)/../../libraries/Wire/utility/
+SRC += $(ARDUINO_LIBS_DIR)/Wire/utility/twi.c
+CXXSRC += $(ARDUINO_LIBS_DIR)/Wire/Wire.cpp
+CXXINCS += -I$(ARDUINO_LIBS_DIR)/Wire/ \
+	-I$(ARDUINO_LIBS_DIR)/Wire/utility/
 endif
 
 ifdef HAVE_LIQUID_CRYSTAL
-CXXSRC += $(ARDUINO)/../../libraries/LiquidCrystal/LiquidCrystal.cpp
-CXXINCS += -I$(ARDUINO)/../../libraries/LiquidCrystal
+CXXSRC += $(ARDUINO_LIBS_DIR)/LiquidCrystal/LiquidCrystal.cpp
+CXXINCS += -I$(ARDUINO_LIBS_DIR)/LiquidCrystal
 endif
 
 
