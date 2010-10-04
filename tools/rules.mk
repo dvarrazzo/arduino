@@ -4,8 +4,8 @@
 
 TARGET = $(notdir $(CURDIR))
 
-ARDUINO = $(INSTALL_DIR)/hardware/cores/arduino
-ARDUINO_LIBS_DIR = $(INSTALL_DIR)/hardware/libraries/
+ARDUINO = $(INSTALL_DIR)/hardware/arduino/cores/arduino
+ARDUINO_LIBS_DIR = $(INSTALL_DIR)/libraries/
 AVR_TOOLS_PATH = /usr/bin
 
 CXXSRC += applet/$(TARGET).cpp
@@ -133,7 +133,7 @@ applet/$(TARGET).cpp: $(TARGET).pde
 	# make error messages refer to the actual .pde file
 	echo '#line 1 "'$(TARGET).pde'"' >> $@
 	cat $< >> $@
-	cat $(ARDUINO)/main.cxx >> $@
+	cat $(ARDUINO)/main.cpp >> $@
 
 elf: applet/$(TARGET).elf
 hex: applet/$(TARGET).hex
