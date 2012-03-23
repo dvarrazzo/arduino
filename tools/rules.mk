@@ -97,6 +97,9 @@ OBJDUMP = $(AVR_TOOLS_PATH)/avr-objdump
 AR  = $(AVR_TOOLS_PATH)/avr-ar
 SIZE = $(AVR_TOOLS_PATH)/avr-size
 NM = $(AVR_TOOLS_PATH)/avr-nm
+# piro: use the local avrdude version
+# local version is 5.11, ubuntu oneiric is 5.10, which is broken
+AVRDUDE = $(AVR_TOOLS_PATH)/avrdude
 AVRDUDE = $(AVR_TOOLS_PATH)/avrdude
 REMOVE = rm -f
 MV = mv -f
