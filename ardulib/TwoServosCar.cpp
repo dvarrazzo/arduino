@@ -33,7 +33,7 @@ void TwoServosCar::pulse()
     if (trim_pot.isAttached())
     {
         trim_pot.read();
-        int trim_us = (trim_pot.getValue() - 512) / 8;
+        int trim_us = (trim_pot.getValue() - 512) >> 3;
         leftServo().setTrim(trim_us);
         rightServo().setTrim(trim_us);
     }
