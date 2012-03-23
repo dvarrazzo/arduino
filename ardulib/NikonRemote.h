@@ -32,8 +32,8 @@ class NikonRemote
 
     private:
         pin_t pin;
-        void pulseON(unsigned long pulse_us);
-        void pulseOFF(unsigned long delay_us);
+        void pulseOn(unsigned long pulse_us);
+        void pulseOff(unsigned long delay_us);
 };
 
 inline

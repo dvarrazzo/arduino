@@ -10,14 +10,14 @@ void NikonRemote::shoot()
     }
 
     for (int i=0; i < 2; i++) {
-        pulseON(2000);          // pulse for 2000 uS (Microseconds)
-        pulseOFF(27850);        // turn pulse off for 27850 us
-        pulseON(390);           // and so on
-        pulseOFF(1580);
-        pulseON(410);
-        pulseOFF(3580);
-        pulseON(400);
-        pulseOFF(63200);
+        pulseOn(2000);          // pulse for 2000 uS (Microseconds)
+        pulseOff(27850);        // turn pulse off for 27850 us
+        pulseOn(390);           // and so on
+        pulseOff(1580);
+        pulseOn(410);
+        pulseOff(3580);
+        pulseOn(400);
+        pulseOff(63200);
     }   // twice
 }
 
@@ -29,7 +29,7 @@ void NikonRemote::shootBulb(unsigned long time_ms) {
 }
 
 // sets the pulse of the IR signal.
-void NikonRemote::pulseON(unsigned long pulse_us)
+void NikonRemote::pulseOn(unsigned long pulse_us)
 {
     // create the microseconds to pulse for
     unsigned long pulse_end = micros() + pulse_us;
@@ -47,7 +47,7 @@ void NikonRemote::pulseON(unsigned long pulse_us)
     }
 }
 
-void NikonRemote::pulseOFF(unsigned long delay_us)
+void NikonRemote::pulseOff(unsigned long delay_us)
 {
     // create the microseconds to delay for
     unsigned long delay_end = micros() + delay_us;
