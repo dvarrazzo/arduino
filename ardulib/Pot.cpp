@@ -1,6 +1,6 @@
 #include "ardulib/Pot.h"
 
-#include "wiring.h" // for analogRead
+#include "Arduino.h" // for analogRead
 
 void Pot::read()
 {

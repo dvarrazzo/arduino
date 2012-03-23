@@ -1,7 +1,6 @@
 #include "Dice.h"
 
-#include "WProgram.h" // for random()
-#include "wiring.h" // for delay()
+#include "Arduino.h" // for random(), delay()
 
 Dice::Dice()
     : _state(Stopped), _face_idx(0)

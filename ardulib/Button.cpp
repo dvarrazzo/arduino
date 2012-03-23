@@ -1,6 +1,6 @@
 #include "ardulib/Button.h"
 
-#include "wiring.h" // for pinMode, digitalRead
+#include "Arduino.h" // for pinMode, digitalRead
 
 void Button::attach(pin_t pin)
 {

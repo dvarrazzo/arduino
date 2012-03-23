@@ -5,6 +5,7 @@
 TARGET = $(notdir $(CURDIR))
 
 ARDUINO = $(INSTALL_DIR)/hardware/arduino/cores/arduino
+ARDUINO_VARIANT ?= standard
 ARDUINO_LIBS_DIR = $(INSTALL_DIR)/libraries/
 AVR_TOOLS_PATH = /usr/bin
 
@@ -12,12 +13,12 @@ CXXSRC += applet/$(TARGET).cpp
 
 # Arduino library required by about all the projects.
 
-CINCS += -I$(ARDUINO)
+CINCS += -I$(ARDUINO) -I$(ARDUINO)/../../variants/$(ARDUINO_VARIANT)
 CXXINCS += -I$(LIBS_DIR)
 
 SRC += $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
        $(ARDUINO)/wiring.c $(ARDUINO)/wiring_digital.c \
-       $(ARDUINO)/wiring_analog.c $(ARDUINO)/pins_arduino.c 
+       $(ARDUINO)/wiring_analog.c
 
 CXXSRC += $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
           $(ARDUINO)/Print.cpp
@@ -127,7 +128,7 @@ build: elf hex
 # Not the original .pde file you actually edit...
 applet/$(TARGET).cpp: $(TARGET).pde
 	test -d applet || mkdir applet
-	echo '#include "WProgram.h"' > $@
+	echo '#include "Arduino.h"' > $@
 	# insert empty error handler for pure virtual function call
 	echo 'extern "C" void __cxa_pure_virtual(void) { while (1); }' >> $@
 	# make error messages refer to the actual .pde file
@@ -162,7 +163,7 @@ COFFCONVERT=$(OBJCOPY) --debugging \
 --change-section-address .data-0x800000 \
 --change-section-address .bss-0x800000 \
 --change-section-address .noinit-0x800000 \
---change-section-address .eeprom-0x810000 
+--change-section-address .eeprom-0x810000
 
 
 coff: applet/$(TARGET).elf

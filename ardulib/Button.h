@@ -3,7 +3,7 @@
 
 #include "ardulib/utils.h"
 
-#include "wiring.h" // for pinMode, digitalRead
+#include "Arduino.h" // for pinMode, digitalRead
 
 class Button
 {

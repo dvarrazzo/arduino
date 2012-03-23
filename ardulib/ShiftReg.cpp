@@ -1,6 +1,6 @@
 #include "ShiftReg.h"
 
-#include "wiring.h" // for pinMode, digitalWrite
+#include "Arduino.h" // for pinMode, digitalWrite
 
 void ShiftReg::attach(pin_t data_pin, pin_t clock_pin, pin_t latch_pin)
 {
