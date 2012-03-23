@@ -14,34 +14,44 @@
  * than rely on the in built timer.
  */
 
-#include "ardulib/NikonRemote.h"
+#ifndef NIKON_REMOTE_H
+#define NIKON_REMOTE_H
 
-static const int ir_led_pin = 13;
+#include "ardulib/utils.h"
 
-static NikonRemote remote;
+class NikonRemote
+{
+    public:
+        NikonRemote();
 
-void setup() {
-    remote.attach(ir_led_pin);
+        void attach(pin_t pin);
+        bool isAttached() const;
+
+        void shoot();
+        void shootBulb(unsigned long ms);
+
+    private:
+        pin_t pin;
+        void pulseON(unsigned long pulse_us);
+        void pulseOFF(unsigned long delay_us);
+};
+
+inline
+NikonRemote::NikonRemote()
+    : pin(INVALID_PIN)
+{ }
+
+inline
+void NikonRemote::attach(pin_t pin)
+{
+    this->pin = pin;
 }
 
-void loop() {
-    // Camera in B mode
-    remote.shootBulb(5 * 1000);
-
-    /*
-     * Regular time lapse.
-     *
-     * For 10" exposure, delay 10000 + pause 200. With pause 100 1/2 shots
-     * are lost.
-     *
-     * For 15" exposure, delay 16000" (sic) + pause 200, but timing between
-     * mirror up and mirror down is irregular, and sporadic shots are lost.
-     */
-
-    /*
-    remote.shoot();
-    delay(16000);
-    delay(200);
-    */
+inline
+bool NikonRemote::isAttached() const
+{
+    return pin != INVALID_PIN;
 }
+
+#endif // NIKON_REMOTE_H
 

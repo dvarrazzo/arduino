@@ -7,6 +7,7 @@ include $(LIBS_DIR)/config.mk
 
 # SRC = 
 
-# CXXSRC =
+CXXSRC = \
+	$(LIBS_DIR)/ardulib/NikonRemote.cpp
 
 include $(LIBS_DIR)/tools/rules.mk
