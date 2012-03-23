@@ -67,7 +67,7 @@ def fetch_data(device, date, step):
     for i, s in enumerate(ss):
         minute = (s.ts - mn).seconds // 60
         if minute > last:
-            logger.info("ts %s: %s", i, s.ts)
+            # logger.info("ts %s: %s", i, s.ts)
             x.append(minute)
             y.append(s.value)
             last = ((minute // step) + 1) * step - 1
