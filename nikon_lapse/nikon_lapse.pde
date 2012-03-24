@@ -67,14 +67,13 @@ void loop()
 
         pot.read();
         gauge.setValue(pot.getValue());
-        /* Serial.print("exposure ms: "); */
-        /* Serial.println(gauge.getExposureMs(), DEC); */
         gauge.display();
 
         // Previous shot is over, and there's been a delay so the camera is
         // ready to shoot again: do it.
         if (!remote.isShooting()) {
-            /* Serial.println("shoot"); */
+            Serial.print("shoot sec: ");
+            Serial.println(gauge.getExposureMs() / 1000, DEC);
             remote.shootBulb(gauge.getExposureMs());
         }
     }
