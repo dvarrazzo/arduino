@@ -2,10 +2,8 @@
 
 #include "Arduino.h"
 
-void ExposureGauge::display() {
-    // No change at all
-    if (value_old == INVALID_VALUE) { return; }
-
+void ExposureGauge::display()
+{
     int stops_new, thirds_new;
     int stops_old, thirds_old;
 
@@ -41,7 +39,7 @@ void ExposureGauge::display() {
         }
     }
 
-    value_old = INVALID_VALUE;
+    value_old = value;
 }
 
 void ExposureGauge::getExposureStops(int value,
@@ -54,7 +52,8 @@ void ExposureGauge::getExposureStops(int value,
     *thirds = value_thirds % 3;
 }
 
-void ExposureGauge::flash(pin_t pin) {
+void ExposureGauge::flash(pin_t pin)
+{
     digitalWrite(pin, HIGH);
     delay(100);
     digitalWrite(pin, LOW);

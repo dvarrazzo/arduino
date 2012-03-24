@@ -21,8 +21,6 @@ class ExposureGauge
         int value;           // 0-1023 range
         int value_old;
 
-        static const int INVALID_VALUE = -1;
-
         void getExposureStops(int value, int *stops, int *thirds) const;
         void flash(pin_t pin);
 };
@@ -30,7 +28,7 @@ class ExposureGauge
 inline
 ExposureGauge::ExposureGauge()
     : pin_stop(INVALID_PIN), pin_third(INVALID_PIN),
-        value_old(INVALID_VALUE)
+        value_old(0)
 { }
 
 inline
@@ -49,10 +47,7 @@ bool ExposureGauge::isAttached() const
 inline
 void ExposureGauge::setValue(int value)
 {
-    if (value_old == INVALID_VALUE) {
-        value_old = this->value;
-        this->value = value;
-    }
+    this->value = value;
 }
 
 inline
