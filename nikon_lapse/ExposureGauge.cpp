@@ -47,7 +47,9 @@ void ExposureGauge::display() {
 void ExposureGauge::getExposureStops(int value,
         int *stops, int *thirds) const
 {
-    int value_thirds = value / 30;
+    // split the useful range from 1 sec (value 0)
+    // to 6553.6 sec (109 minutes, 12 2/3 stops more)
+    int value_thirds = ((long)value * 39) / 1024;
     *stops = value_thirds / 3;
     *thirds = value_thirds % 3;
 }
