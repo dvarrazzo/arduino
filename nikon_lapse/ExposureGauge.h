@@ -21,7 +21,7 @@ class ExposureGauge
         int value;           // 0-1023 range
         int value_old;
 
-        void getExposureStops(int value, int *stops, int *thirds) const;
+        int getExposureThirds(int value) const;
         void flash(pin_t pin);
 };
 
@@ -48,24 +48,6 @@ inline
 void ExposureGauge::setValue(int value)
 {
     this->value = value;
-}
-
-inline
-unsigned long ExposureGauge::getExposureMs() const
-{
-    int stops, thirds;
-    unsigned long rv;
-    getExposureStops(value, &stops, &thirds);
-
-    rv = 1000;
-    while (stops > 0) {
-        --stops;
-        rv *= 2;
-    }
-    if (thirds == 1) { rv = rv * 5 / 4; }     // +25%
-    if (thirds == 2) { rv = rv * 8 / 5; }     // +60%
-
-    return rv;
 }
 
 #endif // EXPOSURE_GAUGE_H

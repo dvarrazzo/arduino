@@ -4,52 +4,47 @@
 
 void ExposureGauge::display()
 {
-    int stops_new, thirds_new;
-    int stops_old, thirds_old;
+    int thirds_new = getExposureThirds(value);
+    int thirds_old = getExposureThirds(value_old);
 
-    getExposureStops(value, &stops_new, &thirds_new);
-    getExposureStops(value_old, &stops_old, &thirds_old);
-
-    if ((stops_new * 3 + thirds_new) > (stops_old * 3 + thirds_old)) {
+    if (thirds_new > thirds_old) {
         // going up
-        while ((stops_new * 3 + thirds_new) > (stops_old * 3 + thirds_old)) {
+        while (thirds_new > thirds_old) {
             thirds_old += 1;
-            if (thirds_old < 3) {
-                flash(pin_third);
-            }
-            else {
-                thirds_old = 0;
-                stops_old += 1;
-                flash(pin_stop);
-            }
+            flash((thirds_old % 3 == 0) ? pin_stop : pin_third);
         }
     }
     else {
         // going down
-        while ((stops_new * 3 + thirds_new) < (stops_old * 3 + thirds_old)) {
+        while (thirds_new < thirds_old) {
             thirds_old -= 1;
-            if (thirds_old >= 0) {
-                flash(pin_third);
-            }
-            else {
-                thirds_old = 2;
-                stops_old -= 1;
-                flash(pin_stop);
-            }
+            flash((thirds_old % 3 == 2) ? pin_stop : pin_third);
         }
     }
 
     value_old = value;
 }
 
-void ExposureGauge::getExposureStops(int value,
-        int *stops, int *thirds) const
+int ExposureGauge::getExposureThirds(int value) const
 {
     // split the useful range from 1 sec (value 0)
     // to 6553.6 sec (109 minutes, 12 2/3 stops more)
-    int value_thirds = ((long)value * 39) / 1024;
-    *stops = value_thirds / 3;
-    *thirds = value_thirds % 3;
+    return ((long)value * 39) / 1024;
+}
+
+unsigned long ExposureGauge::getExposureMs() const
+{
+    unsigned long rv = 1000;
+    int thirds = getExposureThirds(value);
+
+    while (thirds >= 3) {
+        thirds -= 3;
+        rv *= 2;
+    }
+    if (thirds == 1) { rv = rv * 5 / 4; }     // +25%
+    if (thirds == 2) { rv = rv * 8 / 5; }     // +60%
+
+    return rv;
 }
 
 void ExposureGauge::flash(pin_t pin)
