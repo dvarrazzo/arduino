@@ -26,19 +26,24 @@ class NikonRemote
 
         void attach(pin_t pin);
         bool isAttached() const;
+        bool isShooting() const;
 
         void shoot();
         void shootBulb(unsigned long ms);
+        void pulse();
 
     private:
         pin_t pin;
+        unsigned long shoot_end_ms;
+        bool is_shooting;
+
         void pulseOn(unsigned long pulse_us);
         void pulseOff(unsigned long delay_us);
 };
 
 inline
 NikonRemote::NikonRemote()
-    : pin(INVALID_PIN)
+    : pin(INVALID_PIN), is_shooting(false)
 { }
 
 inline
@@ -51,6 +56,12 @@ inline
 bool NikonRemote::isAttached() const
 {
     return pin != INVALID_PIN;
+}
+
+inline
+bool NikonRemote::isShooting() const
+{
+    return is_shooting;
 }
 
 #endif // NIKON_REMOTE_H

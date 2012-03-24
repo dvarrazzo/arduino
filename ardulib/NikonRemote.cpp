@@ -21,11 +21,32 @@ void NikonRemote::shoot()
     }   // twice
 }
 
-void NikonRemote::shootBulb(unsigned long time_ms) {
+void NikonRemote::shootBulb(unsigned long time_ms)
+{
+    if (is_shooting) {
+        return;
+    }
+
     shoot();            // mirror up!
-    delay(time_ms);     // stay open...
-    shoot();            // mirror down
-    delay(150);         // delay required for bulb. Shorter and we may miss a shot
+    shoot_end_ms = millis() + time_ms;
+    is_shooting = true;
+}
+
+void NikonRemote::pulse()
+{
+    if (!is_shooting) {
+        return;
+    }
+
+    if (millis() > shoot_end_ms) {
+        shoot();
+        is_shooting = false;
+        // delay required for bulb. Shorter and we may miss a shot.
+        // pause this delay blocking, so as soon as we have finished and
+        // isShooting() gives false we can shoot again.
+        delay(150);
+    }
+
 }
 
 // sets the pulse of the IR signal.
