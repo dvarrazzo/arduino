@@ -8,7 +8,6 @@ include $(LIBS_DIR)/config.mk
 # SRC =
 
 CXXSRC = \
-	$(LIBS_DIR)/ardulib/FlexiTimer2.cpp \
 	$(LIBS_DIR)/ardulib/NikonRemote.cpp \
 	$(LIBS_DIR)/ardulib/Pot.cpp \
 	ExposureGauge.cpp

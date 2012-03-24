@@ -26,7 +26,6 @@
  * (the second blink of the second led means 60% more than the stop value)
  */
 
-#include "ardulib/FlexiTimer2.h"
 #include "ardulib/NikonRemote.h"
 #include "ardulib/Pot.h"
 #include "ExposureGauge.h"
@@ -40,13 +39,6 @@ static NikonRemote remote;
 static Pot pot;
 static ExposureGauge gauge;
 
-static bool pulse_bit;
-
-void pulse()
-{
-    pulse_bit = true;
-}
-
 void setup()
 {
     Serial.begin(19200);
@@ -54,28 +46,22 @@ void setup()
     remote.attach(ir_led_pin);
     pot.attach(poten_pin);
     gauge.attach(stop_led_pin, third_led_pin);
-
-    FlexiTimer2::set(25, &pulse);
-    FlexiTimer2::start();
 }
 
 void loop()
 {
-    if (pulse_bit) {
-        pulse_bit = false;
-        remote.pulse();
+    remote.pulse();
 
-        pot.read();
-        gauge.setValue(pot.getValue());
-        gauge.display();
+    pot.read();
+    gauge.setValue(pot.getValue());
+    gauge.display();
 
-        // Previous shot is over, and there's been a delay so the camera is
-        // ready to shoot again: do it.
-        if (!remote.isShooting()) {
-            Serial.print("shoot sec: ");
-            Serial.println(gauge.getExposureMs() / 1000, DEC);
-            remote.shootBulb(gauge.getExposureMs());
-        }
+    // Previous shot is over, and there's been a delay so the camera is
+    // ready to shoot again: do it.
+    if (!remote.isShooting()) {
+        Serial.print("shoot sec: ");
+        Serial.println(gauge.getExposureMs() / 1000, DEC);
+        remote.shootBulb(gauge.getExposureMs());
     }
 }
 
