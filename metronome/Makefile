@@ -7,7 +7,6 @@ include $(LIBS_DIR)/config.mk
 
 # SRC =
 
-CXXSRC = \
-	$(LIBS_DIR)/ardulib/Pot.cpp
+# CXXSRC =
 
 include $(LIBS_DIR)/tools/rules.mk
