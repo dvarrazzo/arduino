@@ -46,7 +46,7 @@ void loop()
 
     /* read the bpm from the pot */
     long pot_val = analogRead(pot_pin);
-    int bpm = (bpm_max - bpm_min) * pot_val / 1024.0 + bpm_min;
+    int bpm = (bpm_max - bpm_min) * pot_val / 1023.0 + bpm_min;
     Serial.println(bpm, DEC);
 
     /* calculate when the beat will end */
