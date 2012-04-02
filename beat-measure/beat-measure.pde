@@ -11,9 +11,6 @@ static const int led_pin = 3;
 static const int piezo_pin = 5;
 static const int tap_pin = 7;
 
-static const int bpm_min = 40;
-static const int bpm_max = 208;
-
 /* half period in us
  * 1136 = A - see http://www.oomlout.com/oom.php/products/ardx/circ-06 */
 static const unsigned long tick_tone = 1136;
