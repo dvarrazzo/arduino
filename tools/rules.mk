@@ -120,32 +120,26 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: applet_files build sizeafter
 
-build: elf hex 
+build: elf hex
 
 # Here is the "preprocessing".
-# It creates a .cpp file based with the same name as the .pde file.
-# On top of the new .cpp file comes the WProgram.h header.
-# At the end there is a generic main() function attached.
-# Then the .cpp file will be compiled. Errors during compile will
-# refer to this new, automatically generated, file. 
-# Not the original .pde file you actually edit...
+# It creates a .cpp file including the .pde file and the other parts required
+# to have the libraries and a main() function.
 applet/$(TARGET).cpp: $(TARGET).pde
-	test -d applet || mkdir applet
+	mkdir -p applet
 	echo '#include "Arduino.h"' > $@
 	# insert empty error handler for pure virtual function call
 	echo 'extern "C" void __cxa_pure_virtual(void) { while (1); }' >> $@
-	# make error messages refer to the actual .pde file
-	echo '#line 1 "'$(TARGET).pde'"' >> $@
-	cat $< >> $@
-	cat $(ARDUINO)/main.cpp >> $@
+	echo "#include \"$(TARGET).pde\"" >> $@
+	echo "#include \"$(ARDUINO)/main.cpp\"" >> $@
 
 elf: applet/$(TARGET).elf
 hex: applet/$(TARGET).hex
 eep: applet/$(TARGET).eep
-lss: applet/$(TARGET).lss 
+lss: applet/$(TARGET).lss
 sym: applet/$(TARGET).sym
 
-# Program the device.  
+# Program the device.
 upload: applet/$(TARGET).hex
 	stty -F $(PORT) hupcl
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
