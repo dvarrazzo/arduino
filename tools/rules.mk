@@ -9,7 +9,7 @@ ARDUINO_VARIANT ?= standard
 ARDUINO_LIBS_DIR = $(INSTALL_DIR)/libraries/
 AVR_TOOLS_PATH = /usr/bin
 
-CXXSRC += applet/$(TARGET).cpp
+CXXSRC += applet/program.cpp
 
 # Arduino library required by about all the projects.
 
@@ -123,14 +123,14 @@ all: applet_files build sizeafter
 build: elf hex
 
 # Here is the "preprocessing".
-# It creates a .cpp file including the .pde file and the other parts required
+# It creates a .cpp file including the project file and the other parts required
 # to have the libraries and a main() function.
-applet/$(TARGET).cpp: $(TARGET).pde
+applet/program.cpp: $(TARGET).cpp
 	mkdir -p applet
 	echo '#include "Arduino.h"' > $@
 	# insert empty error handler for pure virtual function call
 	echo 'extern "C" void __cxa_pure_virtual(void) { while (1); }' >> $@
-	echo "#include \"$(TARGET).pde\"" >> $@
+	echo "#include \"../$(TARGET).cpp\"" >> $@
 	echo "#include \"$(ARDUINO)/main.cpp\"" >> $@
 
 elf: applet/$(TARGET).elf
@@ -189,8 +189,8 @@ extcoff: $(TARGET).elf
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from library.
-applet/$(TARGET).elf: applet/$(TARGET).o applet/core.a 
-	$(CC) $(ALL_CFLAGS) -o $@ applet/$(TARGET).o -L. applet/core.a $(LDFLAGS)
+applet/$(TARGET).elf: applet/program.o applet/core.a
+	$(CC) $(ALL_CFLAGS) -o $@ applet/program.o -L. applet/core.a $(LDFLAGS)
 
 applet/core.a: $(OBJ)
 	@for i in $(OBJ); do echo $(AR) rcs applet/core.a $$i; $(AR) rcs applet/core.a $$i; done
