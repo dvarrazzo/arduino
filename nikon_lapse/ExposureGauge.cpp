@@ -15,19 +15,16 @@ void ExposureGauge::display()
     int thirds_new = getExposureThirds(value);
     int thirds_old = getExposureThirds(value_old);
 
-    if (thirds_new > thirds_old) {
-        // going up
-        while (thirds_new > thirds_old) {
-            thirds_old += 1;
-            flash((thirds_old % 3 == 0) ? pin_stop : pin_third);
-        }
+    // going up
+    while (thirds_new > thirds_old) {
+        thirds_old += 1;
+        flash((thirds_old % 3 == 0) ? pin_stop : pin_third);
     }
-    else {
-        // going down
-        while (thirds_new < thirds_old) {
-            thirds_old -= 1;
-            flash((thirds_old % 3 == 2) ? pin_stop : pin_third);
-        }
+
+    // going down
+    while (thirds_new < thirds_old) {
+        thirds_old -= 1;
+        flash((thirds_old % 3 == 2) ? pin_stop : pin_third);
     }
 
     value_old = value;
