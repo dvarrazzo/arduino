@@ -2,6 +2,12 @@
 
 #include "Arduino.h"
 
+void NikonRemote::attach(pin_t pin)
+{
+    pinMode(pin, OUTPUT);
+    this->pin = pin;
+}
+
 void NikonRemote::shoot()
 {
     if (!isAttached())

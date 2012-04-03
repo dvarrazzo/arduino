@@ -32,13 +32,6 @@ ExposureGauge::ExposureGauge()
 { }
 
 inline
-void ExposureGauge::attach(pin_t pin_stop, pin_t pin_third)
-{
-    this->pin_stop = pin_stop;
-    this->pin_third = pin_third;
-}
-
-inline
 bool ExposureGauge::isAttached() const
 {
     return pin_stop != INVALID_PIN;

@@ -47,12 +47,6 @@ NikonRemote::NikonRemote()
 { }
 
 inline
-void NikonRemote::attach(pin_t pin)
-{
-    this->pin = pin;
-}
-
-inline
 bool NikonRemote::isAttached() const
 {
     return pin != INVALID_PIN;

@@ -2,6 +2,14 @@
 
 #include "Arduino.h"
 
+void ExposureGauge::attach(pin_t pin_stop, pin_t pin_third)
+{
+    pinMode(pin_stop, OUTPUT);
+    this->pin_stop = pin_stop;
+    pinMode(pin_third, OUTPUT);
+    this->pin_third = pin_third;
+}
+
 void ExposureGauge::display()
 {
     int thirds_new = getExposureThirds(value);
