@@ -30,10 +30,10 @@
 #include "ardulib/Pot.h"
 #include "ExposureGauge.h"
 
-static const pin_t ir_led_pin = 13;
-static const pin_t stop_led_pin = 2;
+static const pin_t ir_led_pin = 2;
+static const pin_t stop_led_pin = 4;
 static const pin_t third_led_pin = 3;
-static const pin_t poten_pin = 0;
+static const pin_t poten_pin = 5;
 
 static NikonRemote remote;
 static Pot pot;
