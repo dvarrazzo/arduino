@@ -51,10 +51,9 @@ int setLaser(bool on)
 /*
  * Arm the laser trap.
  *
- * Read the minimum value from the laser, then block until something further
- * lowering the minimum read is detected.
+ * Fire the laser and return the minimum light level.
  */
-void trap()
+int armTrap()
 {
     // turn the laser on
     setLaser(true);
@@ -64,34 +63,95 @@ void trap()
     Serial.print("min: ");
     Serial.println(min, DEC);
 
-    // flash to confirm the minimum read
+    return min;
+}
+
+/*
+ * Flash the led for a certain duration.
+ *
+ * The led stays on for *ms*, then off for *ms*, so the function blocks
+ * for 2 * *ms* millis.
+ */
+void flashLed(unsigned long ms)
+{
     digitalWrite(led_pin, HIGH);
-    delay(50);
+    delay(ms);
     digitalWrite(led_pin, LOW);
+    delay(ms);
+}
 
-    // wait until the level goes below the threshold
-    int level = min;
-    int tmin = 1024;
-    int i = 0;
-    while (level > min - photores_threshold) {
-        level = analogRead(photores_pin);
 
-        /*
-        // for photores debugging
-        if (level < tmin) {
-            tmin = level;
+/*
+ * Read if the trap has snapped for about a second.
+ *
+ * if the level falls below min, return true, else return false when
+ * the time is over.
+ */
+bool checkTrap(int min)
+{
+    for (int i = 0; i < 10000; ++i) {
+        int level = analogRead(photores_pin);
+        if (level < min - photores_threshold) {
+            setLaser(false);
+            return true;
         }
-        if (++i >= 10000) {
-            i = 0;
-            Serial.print("current min: ");
-            Serial.println(tmin, DEC);
-            tmin = 1024;
+    }
+    return false;
+}
+
+/*
+ * Fire the flash.
+ *
+ * Stub function: implement it when you get all the stuff you need.
+ */
+void shoot()
+{
+    flashLed(200);
+}
+
+
+/*
+ * Read a "command" from the serial.
+ *
+ * A command is a string terminated by LF.
+ */
+const char *readCommand() {
+    static char buffer[256];
+    char *ptr = buffer;
+    int c;
+
+    while (-1 != (c = Serial.read())) {
+        // command ends on LF
+        if (c == '\x0a') {
+            *ptr = '\x00';
+            return buffer;
         }
-        */
+        *ptr++ = (char)c;
     }
 
-    /* Serial.print("level: "); */
-    /* Serial.println(level, DEC); */
+    // no command in the serial
+    return NULL;
+}
+
+/*
+ * Return *true* if 'buf' contains 'cmd'.
+ */
+bool isCommand(const char *cmd, const char *buf)
+{
+    return (0 == strncmp(cmd, buf, strlen(cmd)));
+}
+
+/*
+ * Parse an unsigned long from a string.
+ */
+unsigned long parseULong(const char *str)
+{
+    unsigned long rv = 0UL;
+    while (*str) {
+        rv *= 10;
+        rv += (*str++) - '0';
+    }
+    return rv;
 }
 
 
@@ -100,13 +160,37 @@ void setup()
     pinMode(led_pin, OUTPUT);
     pinMode(laser_pin, OUTPUT);
     Serial.begin(19200);
-
-    trap();
-    digitalWrite(led_pin, HIGH);
 }
+
 
 void loop()
 {
+    int min = armTrap();
+    unsigned long delay_ms = 0UL;
+
+    // flash to confirm the minimum read
+    flashLed(50);
+
+    for (;;) {
+        if (checkTrap(min)) {
+            delay(delay_ms);
+            shoot();
+            break;
+        }
+
+        const char *cmd = readCommand();
+        if (cmd) {
+            if (isCommand("delay", cmd)) {
+                delay_ms = parseULong(cmd + strlen("delay "));
+                Serial.print("delay updated: ");
+                Serial.println(delay_ms, DEC);
+            }
+            else {
+                Serial.print("unknown command: ");
+                Serial.println(cmd);
+            }
+        }
+    }
 }
 
 /* used to study the values from the photores. */
