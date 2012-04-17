@@ -6,6 +6,7 @@
 
 static const int laser_pin = 9;
 static const int led_pin = 8;
+static const int flash_pin = 2;
 static const int photores_pin = 0;
 
 static const int photores_threshold = 5;
@@ -101,12 +102,12 @@ bool checkTrap(int min)
 
 /*
  * Fire the flash.
- *
- * Stub function: implement it when you get all the stuff you need.
  */
 void shoot()
 {
-    flashLed(200);
+    digitalWrite(flash_pin, HIGH);
+    delay(100);
+    digitalWrite(flash_pin, LOW);
 }
 
 
@@ -158,6 +159,7 @@ unsigned long parseULong(const char *str)
 void setup()
 {
     pinMode(led_pin, OUTPUT);
+    pinMode(flash_pin, OUTPUT);
     pinMode(laser_pin, OUTPUT);
     Serial.begin(19200);
 }
