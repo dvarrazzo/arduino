@@ -1,8 +1,10 @@
 #include "ardulib/Nunchuk.h"
 
 #include <Wire.h>
-#include <utility/twi.h> // For CPU_FREQ
-#include "WProgram.h"  // For DDRC
+#include "Arduino.h"  // For DDRC
+
+// For a standard Arduino. Used to be defined in utility/twi.h
+#define CPU_FREQ 16000000L
 
 void Nunchuk::init(void)
 {
@@ -32,8 +34,8 @@ uint8_t Nunchuk::nunchukInit(unsigned short timeout)
 #if !USE_NEW_WAY_INIT
     // look at <http://wiibrew.org/wiki/Wiimote#The_Old_Way> at "The Old Way"
     Wire.beginTransmission(WII_NUNCHUK_TWI_ADR); // transmit to device 0x52
-    Wire.send(0x40); // sends memory address
-    Wire.send(0x00); // sends sent a zero.
+    Wire.write(0x40); // sends memory address
+    Wire.write(0x00); // sends sent a zero.
     Wire.endTransmission(); // stop transmitting
 #else
     // disable encryption
@@ -43,13 +45,13 @@ uint8_t Nunchuk::nunchukInit(unsigned short timeout)
     do
     {
         Wire.beginTransmission(WII_NUNCHUK_TWI_ADR); // transmit to device 0x52
-        Wire.send(0xF0); // sends memory address
-        Wire.send(0x55); // sends data.
+        Wire.write(0xF0); // sends memory address
+        Wire.write(0x55); // sends data.
         if(Wire.endTransmission() == 0) // stop transmitting
         {
             Wire.beginTransmission(WII_NUNCHUK_TWI_ADR); // transmit to device 0x52
-            Wire.send(0xFB); // sends memory address
-            Wire.send(0x00); // sends sent a zero.
+            Wire.write((uint8_t)0xFB); // sends memory address
+            Wire.write((uint8_t)0x00); // sends sent a zero.
             if(Wire.endTransmission() == 0) // stop transmitting
             {
                 rc = 0;
@@ -72,7 +74,7 @@ int Nunchuk::read(void)
     int cnt;
     for (cnt = 0; cnt < WII_TELEGRAM_LEN && Wire.available(); cnt++)
     {
-        buffer[cnt] = decodeByte(Wire.receive()); // receive byte as an integer
+        buffer[cnt] = decodeByte(Wire.read()); // receive byte as an integer
     }
 
     // debugging
@@ -100,7 +102,7 @@ uint8_t Nunchuk::readControllerIdent(uint8_t *outbuf)
     // read identification
     delay(10);
     Wire.beginTransmission(WII_NUNCHUK_TWI_ADR); // transmit to device 0x52
-    Wire.send(0xFA); // sends memory address of ident in controller
+    Wire.write((uint8_t)0xFA); // sends memory address of ident in controller
     if (Wire.endTransmission() == 0) // stop transmitting
     {
         byte i;
@@ -108,7 +110,7 @@ uint8_t Nunchuk::readControllerIdent(uint8_t *outbuf)
         Wire.requestFrom(WII_NUNCHUK_TWI_ADR, WII_TELEGRAM_LEN); // request data from nunchuk
         for (i = 0; i < WII_TELEGRAM_LEN && Wire.available(); i++)
         {
-            outbuf[i] = Wire.receive(); // receive byte as an integer
+            outbuf[i] = Wire.read(); // receive byte as an integer
         }
         if (i == WII_TELEGRAM_LEN)
         {
@@ -126,7 +128,7 @@ void Nunchuk::sendZero(void)
     for(uint8_t i = 0; i < 3; i++)
     {
         Wire.beginTransmission(WII_NUNCHUK_TWI_ADR); // transmit to device 0x52
-        Wire.send(0x00); // sends one byte
+        Wire.write((uint8_t)0x00); // sends one byte
         Wire.endTransmission(); // stop transmitting
     }
 }
@@ -146,7 +148,7 @@ void Nunchuk::clearTwiInputBuffer(void)
 {
     while (Wire.available())
     {
-        Wire.receive();
+        Wire.read();
     }
 }
 
