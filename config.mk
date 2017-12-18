@@ -5,11 +5,11 @@
 TARGET = $(notdir $(CURDIR))
 
 # Installation path of the arduino environment
-INSTALL_DIR = /opt/arduino-1.0
+INSTALL_DIR = /usr/share/arduino
 
-PORT = /dev/ttyUSB0
+PORT = /dev/ttyACM0
 UPLOAD_RATE = 57600
-AVRDUDE_PROGRAMMER = stk500v1
+AVRDUDE_PROGRAMMER = arduino
 ARDUINO_VARIANT = standard
 MCU = atmega168
 F_CPU = 16000000

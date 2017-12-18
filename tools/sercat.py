@@ -6,6 +6,7 @@ import serial
 import threading
 from select import select
 
+
 def input_read(queue):
     """Read from stdin and put the lines read into the queue *q*."""
     while 1:
@@ -15,12 +16,13 @@ def input_read(queue):
 
         queue.put(line, block=False)
 
+
 def main():
     # data to send to the serial
     q = Queue.Queue()
 
     # set the serial non-blocking to allow use with select
-    ser = serial.Serial('/dev/ttyUSB0', 19200)
+    ser = serial.Serial('/dev/ttyACM0', 9600)
     ser.nonblocking()
 
     # receive data from stdin asynchronously

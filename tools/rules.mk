@@ -21,7 +21,7 @@ SRC += $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
        $(ARDUINO)/wiring_analog.c
 
 CXXSRC += $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
-          $(ARDUINO)/Print.cpp
+          $(ARDUINO)/Print.cpp $(ARDUINO)/new.cpp
 
 
 #
@@ -73,7 +73,7 @@ CTUNING = -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
 
 CFLAGS = $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CWARN) $(CSTANDARD) $(CEXTRA)
-CXXFLAGS = $(CDEFS) $(CINCS) $(CXXINCS) -O$(OPT)
+CXXFLAGS = $(CDEFS) $(CINCS) $(CXXINCS) -O$(OPT) -include new.h -include Arduino.h
 #ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs 
 LDFLAGS = -lm
 
@@ -86,8 +86,7 @@ LDFLAGS += -Wl,--gc-sections
 AVRDUDE_PORT = $(PORT)
 AVRDUDE_WRITE_FLASH = -U flash:w:applet/$(TARGET).hex
 AVRDUDE_FLAGS = -V -F -C $(INSTALL_DIR)/hardware/tools/avrdude.conf \
--p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) \
--b $(UPLOAD_RATE)
+-p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 
 # Program settings
 CC = $(AVR_TOOLS_PATH)/avr-gcc
@@ -97,15 +96,12 @@ OBJDUMP = $(AVR_TOOLS_PATH)/avr-objdump
 AR  = $(AVR_TOOLS_PATH)/avr-ar
 SIZE = $(AVR_TOOLS_PATH)/avr-size
 NM = $(AVR_TOOLS_PATH)/avr-nm
-# piro: use the local avrdude version
-# local version is 5.11, ubuntu oneiric is 5.10, which is broken
-# AVRDUDE = $(AVR_TOOLS_PATH)/avrdude
-AVRDUDE = /usr/local/bin/avrdude
+AVRDUDE = $(AVR_TOOLS_PATH)/avrdude
 REMOVE = rm -f
 MV = mv -f
 
 # Define all object files.
-OBJ = $(SRC:.c=.o) $(CXXSRC:.cpp=.o) $(ASRC:.S=.o) 
+OBJ = $(SRC:.c=.o) $(CXXSRC:.cpp=.o) $(ASRC:.S=.o)
 
 # Define all listing files.
 LST = $(ASRC:.S=.lst) $(CXXSRC:.cpp=.lst) $(SRC:.c=.lst)
@@ -127,10 +123,7 @@ build: elf hex
 # to have the libraries and a main() function.
 applet/program.cpp: $(TARGET).cpp
 	mkdir -p applet
-	echo '#include "Arduino.h"' > $@
-	# insert empty error handler for pure virtual function call
-	echo 'extern "C" void __cxa_pure_virtual(void) { while (1); }' >> $@
-	echo "#include \"../$(TARGET).cpp\"" >> $@
+	echo "#include \"../$(TARGET).cpp\"" > $@
 	echo "#include \"$(ARDUINO)/main.cpp\"" >> $@
 
 elf: applet/$(TARGET).elf
