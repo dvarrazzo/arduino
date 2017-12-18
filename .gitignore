@@ -8,3 +8,4 @@ Blink/*
 thermo/server/lib
 thermo/server/thermo/.google_appengine
 thermo/server/thermo/pygooglechart.py
+env

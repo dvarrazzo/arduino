@@ -1,4 +1,4 @@
-/* You need a comment as first line */
+/* Use alsa2serial to send data in here */
 
 #include "FastLED.h"
 
