@@ -1,7 +1,9 @@
 *.sw?
 *.[do]
 *.py[cdw]
-*/applet/*
+*.elf
+*.hex
+core.a
 OttoLed/*
 Blink/*
 *.[sb]#[0-9]
