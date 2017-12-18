@@ -7,8 +7,10 @@ include $(LIBS_DIR)/config.mk
 
 # SRC =
 
-CXXSRC = /usr/local/src/FastLED/FastLED.cpp
+# CXXSRC =
 
-CXXINCS += -I/usr/local/src/FastLED
+# CXXINCS =
+
+HAVE_FASTLED = 1
 
 include $(LIBS_DIR)/tools/rules.mk

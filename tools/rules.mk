@@ -44,6 +44,11 @@ CXXSRC += $(ARDUINO_LIBS_DIR)/LiquidCrystal/LiquidCrystal.cpp
 CXXINCS += -I$(ARDUINO_LIBS_DIR)/LiquidCrystal
 endif
 
+ifdef HAVE_FASTLED
+FASTLED_DIR ?= /usr/local/src/FastLED
+CXXSRC += $(FASTLED_DIR)/FastLED.cpp
+CXXINCS += -I$(FASTLED_DIR)
+endif
 
 FORMAT = ihex
 
