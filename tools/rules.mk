@@ -21,7 +21,7 @@ SRC += $(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
        $(ARDUINO)/wiring_analog.c
 
 CXXSRC += $(ARDUINO)/HardwareSerial.cpp $(ARDUINO)/WMath.cpp \
-          $(ARDUINO)/Print.cpp $(ARDUINO)/new.cpp
+          $(ARDUINO)/Print.cpp $(ARDUINO)/Stream.cpp $(ARDUINO)/new.cpp
 
 
 #
