@@ -2,6 +2,7 @@
 
 #include "FastLED.h"
 #include "PacketSerial.h"
+#include "ardulib/FlexiTimer2.h"
 
 #define NUM_LEDS 49
 #define DATA_PIN 5
@@ -55,18 +56,21 @@ CRGB *led_at(int row, int col)
 }
 
 
-void onPacketReceived(const uint8_t* buffer, size_t size);
+void on_packet_received(const uint8_t* buffer, size_t size);
+void update_leds();
 
 void setup()
 {
     ps.begin(57600);
-    ps.setPacketHandler(&onPacketReceived);
+    ps.setPacketHandler(&on_packet_received);
 
     FastLED.addLeds<WS2811, DATA_PIN, GRB>(leds, NUM_LEDS);
 
-    for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = 0x000000;
-    }
+    update_leds();
+
+    // Update display at 25 Hz
+    FlexiTimer2::set(40, update_leds);
+    FlexiTimer2::start();
 }
 
 void loop()
@@ -95,12 +99,16 @@ void update_leds()
 
     // Refresh the leds
     FastLED.show();
+
+    // The bars go down if no music is received
+    for (int i = 0; i < BUF_IN_SIZE; i++) {
+        buf_in[i] = max(buf_in[i] - 1, 0);
+    }
 }
 
-void onPacketReceived(const uint8_t* buffer, size_t size)
+void on_packet_received(const uint8_t* buffer, size_t size)
 {
     if (size >= BUF_IN_SIZE) {
         memcpy(buf_in, buffer, BUF_IN_SIZE);
-        update_leds();
     }
 }

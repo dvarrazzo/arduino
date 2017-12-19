@@ -7,7 +7,7 @@ include $(LIBS_DIR)/config.mk
 
 # SRC =
 
-# CXXSRC =
+CXXSRC = ../ardulib/FlexiTimer2.cpp
 
 # CXXINCS =
 
