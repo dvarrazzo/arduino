@@ -46,7 +46,7 @@ CXXINCS += -I$(ARDUINO_LIBS_DIR)/LiquidCrystal
 endif
 
 ifdef HAVE_FASTLED
-FASTLED_DIR ?= /usr/local/src/FastLED
+FASTLED_DIR = $(LIBS_DIR)/libs/FastLED
 CXXSRC += $(FASTLED_DIR)/FastLED.cpp
 CXXSRC += $(FASTLED_DIR)/hsv2rgb.cpp
 CXXSRC += $(FASTLED_DIR)/colorutils.cpp

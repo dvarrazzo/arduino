@@ -1,0 +1,4 @@
+[submodule "libs/FastLED"]
+	path = libs/FastLED
+	url = https://github.com/FastLED/FastLED.git
+	ignore = dirty
