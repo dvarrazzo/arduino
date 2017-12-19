@@ -1,6 +1,7 @@
 /* Use alsa2serial to send data in here */
 
 #include "FastLED.h"
+#include "PacketSerial.h"
 
 #define NUM_LEDS 49
 #define DATA_PIN 5
@@ -13,7 +14,7 @@
 
 CRGB leds[NUM_LEDS];
 byte buf_in[BUF_IN_SIZE];
-
+PacketSerial ps;
 
 /* Leds order:
  *
@@ -53,8 +54,13 @@ CRGB *led_at(int row, int col)
     return leds + i;
 }
 
-void setup() {
-    Serial.begin(38400);
+
+void onPacketReceived(const uint8_t* buffer, size_t size);
+
+void setup()
+{
+    ps.begin(57600);
+    ps.setPacketHandler(&onPacketReceived);
 
     FastLED.addLeds<WS2811, DATA_PIN, GRB>(leds, NUM_LEDS);
 
@@ -63,23 +69,38 @@ void setup() {
     }
 }
 
-CHSV hsv1 = CHSV(0, 255, 255);
-CHSV hsv2 = CHSV(128, 255, 255);
-
 void loop()
 {
-    if (Serial.readBytes((char *)buf_in, BUF_IN_SIZE)) {
-        hsv1.h = (hsv1.h + 1) & 255;
-        hsv2.h = (hsv2.h + 1) & 255;
+    ps.update();
+}
 
-        for (int j = 0; j < NCOLS; j++) {
-            long val = buf_in[j] * NROWS;
-            for (int i = 0; i < NROWS; i++) {
-                int ledval = min(255, val);
-                val -= ledval;
-                *led_at(i, j) = blend(hsv1, hsv2, ledval);
-            }
+void update_leds()
+{
+    static CHSV hsv1 = CHSV(0, 255, 255);
+    static CHSV hsv2 = CHSV(128, 255, 255);
+
+    // Rotate colours spectrum
+    hsv1.h = (hsv1.h + 1) & 255;
+    hsv2.h = (hsv2.h + 1) & 255;
+
+    // Paint the buffer state on the leds
+    for (int j = 0; j < NCOLS; j++) {
+        long val = buf_in[j] * NROWS;
+        for (int i = 0; i < NROWS; i++) {
+            int ledval = min(255, val);
+            val -= ledval;
+            *led_at(i, j) = blend(hsv1, hsv2, ledval);
         }
-        FastLED.show();
+    }
+
+    // Refresh the leds
+    FastLED.show();
+}
+
+void onPacketReceived(const uint8_t* buffer, size_t size)
+{
+    if (size >= BUF_IN_SIZE) {
+        memcpy(buf_in, buffer, BUF_IN_SIZE);
+        update_leds();
     }
 }

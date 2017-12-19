@@ -1,6 +1,7 @@
 # simple pulse reading inspired by https://github.com/atomnuker/pa_fft
 # fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
 
+from cobs import cobs
 import serial
 import numpy as np
 import pulseaudio.lib_pulseaudio as pa
@@ -11,7 +12,10 @@ sample_rate = 44100
 chunk = 1024    # Use a multiple of [rows]
 
 # pacmd list-sources | grep name:
+# Output mixer
 device = "alsa_output.pci-0000_00_1b.0.analog-stereo.monitor"
+# Microphone
+# device = "alsa_input.pci-0000_00_1b.0.analog-stereo"
 
 
 def calculate_levels(data, chunk, sample_rate):
@@ -22,7 +26,7 @@ def calculate_levels(data, chunk, sample_rate):
 
 
 def main():
-    ser = serial.Serial('/dev/ttyACM0', 38400)
+    ser = serial.Serial('/dev/ttyACM0', 57600)
 
     ss = pa.pa_sample_spec()
     ss.format = pa.PA_SAMPLE_S16LE
@@ -50,9 +54,10 @@ def main():
             a = np.ctypeslib.as_array(pa_buf)
             matrix = calculate_levels(a, chunk, sample_rate)
             matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
-
             # print matrix
-            ser.write(matrix.tostring())
+
+            packet = cobs.encode(matrix.tostring()) + '\0'
+            ser.write(packet)
 
     finally:
         pa.pa_simple_free(s)

@@ -2,3 +2,7 @@
 	path = libs/FastLED
 	url = https://github.com/FastLED/FastLED.git
 	ignore = dirty
+[submodule "libs/PacketSerial"]
+	path = libs/PacketSerial
+	url = https://github.com/bakercp/PacketSerial.git
+	ignore = dirty

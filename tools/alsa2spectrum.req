@@ -1,3 +1,4 @@
 -e git+https://github.com/dvarrazzo/python-pulseaudio.git@53f10e5c#egg=libpulseaudio
 numpy>=1.13.3,<1.14
 pyserial==3.4
+cobs>=1.1.3,<1.2

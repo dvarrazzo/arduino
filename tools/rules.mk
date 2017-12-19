@@ -53,6 +53,11 @@ CXXSRC += $(FASTLED_DIR)/colorutils.cpp
 CXXINCS += -I$(FASTLED_DIR)
 endif
 
+ifdef HAVE_PACKETSERIAL
+PACKETSERIAL_DIR = $(LIBS_DIR)/libs/PacketSerial/src
+CXXINCS += -I$(PACKETSERIAL_DIR)
+endif
+
 FORMAT = ihex
 
 # Name of this Makefile (used for "make depend").
@@ -86,7 +91,7 @@ CXXFLAGS = $(CDEFS) $(CINCS) $(CXXINCS) -O$(OPT) -include new.h -include Arduino
 LDFLAGS = -lm
 
 # Tell the compiler to drop unused code.
-CXXFLAGS += -ffunction-sections -fdata-sections
+CXXFLAGS += -ffunction-sections -fdata-sections -std=gnu++0x
 CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
