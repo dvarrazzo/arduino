@@ -48,6 +48,8 @@ endif
 ifdef HAVE_FASTLED
 FASTLED_DIR ?= /usr/local/src/FastLED
 CXXSRC += $(FASTLED_DIR)/FastLED.cpp
+CXXSRC += $(FASTLED_DIR)/hsv2rgb.cpp
+CXXSRC += $(FASTLED_DIR)/colorutils.cpp
 CXXINCS += -I$(FASTLED_DIR)
 endif
 

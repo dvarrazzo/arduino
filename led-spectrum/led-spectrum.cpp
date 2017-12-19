@@ -27,7 +27,7 @@ byte buf_in[BUF_IN_SIZE];
  * 02   16  22  36  42
  * 01   17  21  37  41
  * 00   18  20  38  40
- *    19      39
+ *        19      39
  */
 CRGB *led_at(int row, int col)
 {
@@ -63,19 +63,21 @@ void setup() {
     }
 }
 
+CHSV hsv1 = CHSV(0, 255, 255);
+CHSV hsv2 = CHSV(128, 255, 255);
 
 void loop()
 {
-    static int prev;
-    static int nsamp;
-
     if (Serial.readBytes((char *)buf_in, BUF_IN_SIZE)) {
+        hsv1.h = (hsv1.h + 1) & 255;
+        hsv2.h = (hsv2.h + 1) & 255;
+
         for (int j = 0; j < NCOLS; j++) {
             long val = buf_in[j] * NROWS;
             for (int i = 0; i < NROWS; i++) {
                 int ledval = min(255, val);
                 val -= ledval;
-                led_at(i, j)->setRGB(255, ledval, ledval);
+                *led_at(i, j) = blend(hsv1, hsv2, ledval);
             }
         }
         FastLED.show();
