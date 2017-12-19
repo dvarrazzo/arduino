@@ -1,2 +1,2 @@
 pyserial==3.4
--e git+https://github.com/Valodim/python-pulseaudio.git@7af33cf6#egg=libpulseaudio
+-e git+https://github.com/dvarrazzo/python-pulseaudio.git@53f10e5c#egg=libpulseaudio
