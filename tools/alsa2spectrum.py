@@ -56,7 +56,8 @@ def main():
 
             a = np.ctypeslib.as_array(pa_buf)
             matrix = calculate_levels(a, chunk, sample_rate)
-            matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
+            # matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
+            matrix = (50 * matrix).clip(max=255).astype('uint8')
             # print matrix
 
             packet = cobs.encode(matrix.tostring()) + '\0'
