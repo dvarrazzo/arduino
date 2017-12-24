@@ -2,10 +2,11 @@
 # fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
 
 import sys
+import Queue
 import serial
 import numpy as np
 from cobs import cobs
-import Queue
+from time import time
 import pulseaudio.lib_pulseaudio as pa
 from ctypes import cast, sizeof, POINTER, c_int16, c_size_t, c_void_p
 
@@ -153,17 +154,38 @@ def calculate_levels(data, chunk, sample_rate):
     return np.log10(fourier + 0.000001).clip(min=0)
 
 
+def read_from_serial(ser, l=[]):
+    while 1:
+        c = ser.read()
+        if not c:
+            break
+        l.append(c)
+        if c in '\r\n':
+            print '<<< ' + ''.join(l),
+            del l[:]
+
+
 def main():
     recorder = Recorder(device, sample_rate)
-    ser = serial.Serial('/dev/ttyACM0', 57600)
+    ser = serial.Serial('/dev/ttyACM0', 57600, timeout=0)
+    t0 = int(time())
+    n = 0
     for chunk in recorder:
         matrix = calculate_levels(chunk, chunk_size, sample_rate)
         matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
-        print matrix
+        # print matrix
 
         packet = cobs.encode(matrix.tostring()) + '\0'
         ser.write(packet)
 
+        t1 = int(time())
+        if t1 > t0:
+            print t0, n
+            n = 0
+            t0 = t1
+        n += 1
+
+        read_from_serial(ser)
 
 if __name__ == '__main__':
     try:

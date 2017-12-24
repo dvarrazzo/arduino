@@ -1,8 +1,8 @@
-/* Use alsa2serial to send data in here */
+/* Use tools/alsa2spectrum.py to send data in here */
 
-#include "FastLED.h"
-#include "PacketSerial.h"
-#include "ardulib/FlexiTimer2.h"
+#include <FastLED.h>
+#include <PacketSerial.h>
+#include <TaskScheduler.h>
 
 #define NUM_LEDS 49
 #define DATA_PIN 5
@@ -15,7 +15,6 @@
 
 CRGB leds[NUM_LEDS];
 byte buf_in[BUF_IN_SIZE];
-PacketSerial ps;
 
 /* Leds order:
  *
@@ -56,8 +55,17 @@ CRGB *led_at(int row, int col)
 }
 
 
+int npack = 0, nup = 0;
+
 void on_packet_received(const uint8_t* buffer, size_t size);
 void update_leds();
+void count_packets();
+
+Scheduler ts;
+Task t_update(40, TASK_FOREVER, &update_leds, &ts, true);
+Task t_print(1000, TASK_FOREVER, &count_packets, &ts, true);
+
+PacketSerial ps;
 
 void setup()
 {
@@ -65,23 +73,30 @@ void setup()
     ps.setPacketHandler(&on_packet_received);
 
     FastLED.addLeds<WS2811, DATA_PIN, GRB>(leds, NUM_LEDS);
-
     update_leds();
-
-    // Update display at 25 Hz
-    FlexiTimer2::set(40, update_leds);
-    FlexiTimer2::start();
 }
 
 void loop()
 {
     ps.update();
+    ts.execute();
+}
+
+void count_packets()
+{
+    Serial.print("np: "),
+    Serial.println(npack);
+    npack = 0;
+
+    Serial.print("nu: "),
+    Serial.println(nup);
+    nup = 0;
 }
 
 void update_leds()
 {
     static CHSV hsv1 = CHSV(0, 255, 255);
-    static CHSV hsv2 = CHSV(128, 255, 255);
+    static CHSV hsv2 = CHSV(170, 255, 255);
 
     // Rotate colours spectrum
     hsv1.h = (hsv1.h + 1) & 255;
@@ -99,6 +114,7 @@ void update_leds()
 
     // Refresh the leds
     FastLED.show();
+    nup++;
 
     // The bars go down if no music is received
     for (int i = 0; i < BUF_IN_SIZE; i++) {
@@ -110,5 +126,6 @@ void on_packet_received(const uint8_t* buffer, size_t size)
 {
     if (size >= BUF_IN_SIZE) {
         memcpy(buf_in, buffer, BUF_IN_SIZE);
+        npack++;
     }
 }
