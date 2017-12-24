@@ -1,6 +1,7 @@
 # simple pulse reading inspired by https://github.com/atomnuker/pa_fft
 # fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
 
+from time import time
 from cobs import cobs
 import serial
 import numpy as np
@@ -26,7 +27,7 @@ def calculate_levels(data, chunk, sample_rate):
 
 
 def main():
-    ser = serial.Serial('/dev/ttyACM0', 57600)
+    ser = serial.Serial('/dev/ttyACM0', 57600, timeout=0)
 
     ss = pa.pa_sample_spec()
     ss.format = pa.PA_SAMPLE_S16LE
@@ -43,6 +44,8 @@ def main():
     if not s:
         raise Exception('pa_simple_new() failed: %s' % pa.pa_strerror(pa_e))
 
+    t0 = int(time())
+    n = 0
     try:
         pa_buf = (c_int16 * chunk)()
         while 1:
@@ -59,8 +62,28 @@ def main():
             packet = cobs.encode(matrix.tostring()) + '\0'
             ser.write(packet)
 
+            t1 = int(time())
+            if t1 > t0:
+                print t0, n
+                n = 0
+                t0 = t1
+            n += 1
+
+            read_from_serial(ser)
+
     finally:
         pa.pa_simple_free(s)
+
+
+def read_from_serial(ser, l=[]):
+    while 1:
+        c = ser.read()
+        if not c:
+            break
+        l.append(c)
+        if c in '\r\n':
+            print '<<< ' + ''.join(l),
+            del l[:]
 
 
 if __name__ == '__main__':

@@ -6,3 +6,7 @@
 	path = libs/PacketSerial
 	url = https://github.com/bakercp/PacketSerial.git
 	ignore = dirty
+[submodule "lib/TaskScheduler"]
+	path = libs/TaskScheduler
+	url = https://github.com/arkhipenko/TaskScheduler.git
+	ignore = dirty
