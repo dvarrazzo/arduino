@@ -1,11 +1,17 @@
-# simple pulse reading inspired by https://github.com/atomnuker/pa_fft
-# fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
+#!/usr/bin/env python
+"""
+Read audio from a Pulseaudio source and send a spectrum as packets to Arduino
+"""
+# Note: you can use
+#   pacmd list-sources | grep name:
+# to get the list of Pulseaudio sources from command line
 
 import os
 import sys
 import Queue
 from glob import glob
 from time import time
+from collections import OrderedDict
 from ctypes import cast, sizeof, POINTER, c_int16, c_size_t, c_void_p
 
 import serial
@@ -23,25 +29,21 @@ rows = 8
 sample_rate = 44100
 chunk_size = 1024    # Use a multiple of [rows]
 
-# pacmd list-sources | grep name:
-# Output mixer
-device = "alsa_output.pci-0000_00_1b.0.analog-stereo.monitor"
-# Microphone
-# device = "alsa_input.pci-0000_00_1b.0.analog-stereo"
-
 
 class ScriptError(Exception):
     """Controlled exception raised by the script."""
 
 
 class Recorder(object):
-    def __init__(self, source_name, rate):
+    def __init__(self, source_name, rate, list_sources=False):
         self.source_name = source_name
         self.rate = rate
+        self.sources = OrderedDict()
         self._clear_chunk()
+        self._list_sources = list_sources
 
-        # will become True or False after source_info
-        self._source_found = None
+        # Exception raised in a callback, to be re-raised in the main thread
+        self._exception = None
 
         # Wrap callback methods in appropriate ctypefunc instances so
         # that the Pulseaudio C API can call them
@@ -69,14 +71,19 @@ class Recorder(object):
     def __iter__(self):
         while True:
             try:
-                yield self._chunks.get(True, 1)
+                c = self._chunks.get(True, 1)
+                if c is None:
+                    break
+                yield c
             except Queue.Empty:
-                if self._source_found is None:
+                if self._exception:
+                    raise self._exception
+
+                # Not sure if the following can happen: stay in the loop
+                if not self.sources:
                     logger.warn("stream info not received yet")
-                    continue
                 else:
-                    assert self._source_found is False, self._source_found
-                    raise ScriptError("source not found: %s" % self.source_name)
+                    logger.debug("no sample")
 
     def context_notify_cb(self, context, _):
         state = pa.pa_context_get_state(context)
@@ -96,18 +103,36 @@ class Recorder(object):
 
     def source_info_cb(self, context, source_info_p, _, __):
         if not source_info_p:
-            if self._source_found is None:
-                self._source_found = False
-                logger.warn("source not found: %s", self.source_name)
-            return
+            if self._list_sources:
+                # Signal __iter__ to exit
+                self._chunks.put(None)
+                return
 
-        source_info = source_info_p.contents
-        logger.debug("got source index %s: %s (%s)",
-            source_info.index, source_info.name, source_info.description)
+            # All sources listed: pick the best one or the chosen one
+            if not self.sources:
+                self._exception = ScriptError("no alsa source found")
+                return
 
-        if source_info.name == self.source_name:
-            self._source_found = True
-            logger.info("recording using source %s", source_info.name)
+            if self.source_name:
+                try:
+                    idx = self.sources[self.source_name]
+                except KeyError:
+                    self._exception = ScriptError(
+                        "alsa source %s not found" % self.source_name)
+                    return
+            else:
+                # Select the first monitor source
+                for k in self.sources:
+                    if k.endswith('.monitor'):
+                        self.source_name = k
+                        break
+                else:
+                    # Whatever, pick the first source
+                    self.source_name = self.sources.keys()[0]
+
+                idx = self.sources[self.source_name]
+
+            logger.info("recording using source %s", self.source_name)
             samplespec = pa.pa_sample_spec()
             samplespec.channels = 1
             samplespec.format = pa.PA_SAMPLE_S16LE
@@ -115,9 +140,20 @@ class Recorder(object):
 
             pa_stream = pa.pa_stream_new(context, sys.argv[0], samplespec, None)
             pa.pa_stream_set_read_callback(
-                pa_stream, self._stream_read_cb, source_info.index)
+                pa_stream, self._stream_read_cb, idx)
             pa.pa_stream_connect_record(
-                pa_stream, source_info.name, None, pa.PA_STREAM_RECORD)
+                pa_stream, self.source_name, None, pa.PA_STREAM_RECORD)
+
+            return
+
+        source_info = source_info_p.contents
+        logger.debug("got source index %s: %s (%s)",
+            source_info.index, source_info.name, source_info.description)
+        self.sources[source_info.name] = source_info.index
+
+        if self._list_sources:
+            print source_info.name, 'index:', source_info.index, \
+                source_info.description
 
     def stream_read_cb(self, stream, length, index_incr):
         data = c_void_p()
@@ -151,6 +187,7 @@ class Recorder(object):
 
 
 def calculate_levels(data, chunk, sample_rate):
+    # fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
     fourier = np.delete(np.fft.rfft(data), -1)
     fourier = np.reshape(fourier, (rows, chunk / rows / 2))
     fourier = np.abs(np.average(fourier, axis=1) / 4)
@@ -177,9 +214,9 @@ def main():
     try:
         ser = serial.Serial(opt.serial, 57600, timeout=0)
     except Exception, e:
-        raise ScriptError("couldn't open serial %s: %s", opt.serial, e)
+        raise ScriptError(str(e))
 
-    recorder = Recorder(device, sample_rate)
+    recorder = Recorder(opt.source, sample_rate, opt.list_sources)
     t0 = int(time())
     n = 0
     for chunk in recorder:
@@ -227,6 +264,10 @@ def parse_cmdline():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--serial',
         help="Arduino serial port [default: auto]")
+    parser.add_argument('--source',
+        help="Pulseaudio source [default: auto]")
+    parser.add_argument('--list-sources', action='store_true',
+        help="List pulseaudio sources and exit")
 
     opt = parser.parse_args()
 
