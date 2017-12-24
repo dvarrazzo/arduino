@@ -96,7 +96,7 @@ void count_packets()
 void update_leds()
 {
     static CHSV hsv1 = CHSV(0, 255, 255);
-    static CHSV hsv2 = CHSV(128, 255, 255);
+    static CHSV hsv2 = CHSV(170, 255, 255);
 
     // Rotate colours spectrum
     hsv1.h = (hsv1.h + 1) & 255;
