@@ -89,7 +89,7 @@ class Recorder(object):
         state = pa.pa_context_get_state(context)
 
         if state == pa.PA_CONTEXT_READY:
-            logger.info("Pulseaudio connection ready")
+            logger.debug("Pulseaudio connection ready")
             # Connected to Pulseaudio. Now request that source_info_cb
             # be called with information about the available sources.
             o = pa.pa_context_get_source_info_list(context, self._source_info_cb, None)
@@ -201,12 +201,16 @@ def read_from_serial(ser, l=[]):
             break
         l.append(c)
         if c in '\r\n':
-            print '<<< ' + ''.join(l),
+            s = ''.join(l).rstrip()
+            if s:
+                logger.debug('from serial: %s', s)
             del l[:]
 
 
 def main():
     opt = parse_cmdline()
+    logger.setLevel(opt.loglevel)
+
     if not opt.serial:
         opt.serial = find_serial()
 
@@ -229,7 +233,7 @@ def main():
 
         t1 = int(time())
         if t1 > t0:
-            print t0, n
+            logger.debug("chunks recorded: %s", n)
             n = 0
             t0 = t1
         n += 1
@@ -268,6 +272,12 @@ def parse_cmdline():
         help="Pulseaudio source [default: auto]")
     parser.add_argument('--list-sources', action='store_true',
         help="List pulseaudio sources and exit")
+
+    g = parser.add_mutually_exclusive_group()
+    g.add_argument('-q', '--quiet', help="Talk less", dest='loglevel',
+        action='store_const', const=logging.WARN, default=logging.INFO)
+    g.add_argument('-v', '--verbose', help="Talk more", dest='loglevel',
+        action='store_const', const=logging.DEBUG, default=logging.INFO)
 
     opt = parser.parse_args()
 
