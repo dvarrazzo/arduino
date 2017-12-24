@@ -1,14 +1,17 @@
 # simple pulse reading inspired by https://github.com/atomnuker/pa_fft
 # fft inspired by https://github.com/koppi/mk/blob/master/linuxcnc/configs/koppi-cnc/alsa-fft.py
 
+import os
 import sys
 import Queue
+from glob import glob
+from time import time
+from ctypes import cast, sizeof, POINTER, c_int16, c_size_t, c_void_p
+
 import serial
 import numpy as np
 from cobs import cobs
-from time import time
 import pulseaudio.lib_pulseaudio as pa
-from ctypes import cast, sizeof, POINTER, c_int16, c_size_t, c_void_p
 
 import logging
 logger = logging.getLogger()
@@ -166,8 +169,17 @@ def read_from_serial(ser, l=[]):
 
 
 def main():
+    opt = parse_cmdline()
+    if not opt.serial:
+        opt.serial = find_serial()
+
+    logger.info("connecting to Arduino on serial %s", opt.serial)
+    try:
+        ser = serial.Serial(opt.serial, 57600, timeout=0)
+    except Exception, e:
+        raise ScriptError("couldn't open serial %s: %s", opt.serial, e)
+
     recorder = Recorder(device, sample_rate)
-    ser = serial.Serial('/dev/ttyACM0', 57600, timeout=0)
     t0 = int(time())
     n = 0
     for chunk in recorder:
@@ -186,6 +198,40 @@ def main():
         n += 1
 
         read_from_serial(ser)
+
+
+def find_serial():
+    sers = glob('/dev/serial/by-id/*')
+    if not sers:
+        raise ScriptError(
+            "no serial port found in /dev: is Arduino connected?")
+
+    sers.sort()
+    asers = [s for s in sers if 'arduino' in s.lower()]
+    if asers:
+        if len(asers) > 1:
+            logger.info(
+                "found %s serials looking like Arduino, picking the first",
+                len(asers))
+        ser = asers[0]
+    else:
+        logger.info("no serial looks like Arduino; trying one anyway")
+        ser = sers[0]
+
+    ser = os.path.abspath(os.path.join(os.path.dirname(ser), os.readlink(ser)))
+    return ser
+
+
+def parse_cmdline():
+    from argparse import ArgumentParser
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--serial',
+        help="Arduino serial port [default: auto]")
+
+    opt = parser.parse_args()
+
+    return opt
+
 
 if __name__ == '__main__':
     try:
