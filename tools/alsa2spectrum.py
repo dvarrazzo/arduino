@@ -211,25 +211,30 @@ def main():
     opt = parse_cmdline()
     logger.setLevel(opt.loglevel)
 
-    if not opt.serial:
-        opt.serial = find_serial()
+    if not opt.no_serial:
+        if not opt.serial:
+            opt.serial = find_serial()
 
-    logger.info("connecting to Arduino on serial %s", opt.serial)
-    try:
-        ser = serial.Serial(opt.serial, 57600, timeout=0)
-    except Exception, e:
-        raise ScriptError(str(e))
+        logger.info("connecting to Arduino on serial %s", opt.serial)
+        try:
+            ser = serial.Serial(opt.serial, 57600, timeout=0)
+        except Exception, e:
+            raise ScriptError(str(e))
+    else:
+        logger.info("using no serial, just printing stuff")
 
     recorder = Recorder(opt.source, sample_rate, opt.list_sources)
     t0 = int(time())
     n = 0
     for chunk in recorder:
         matrix = calculate_levels(chunk, chunk_size, sample_rate)
-        matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
-        # print matrix
 
-        packet = cobs.encode(matrix.tostring()) + '\0'
-        ser.write(packet)
+        if not opt.no_serial:
+            matrix = (10 * matrix ** 2).clip(max=255).astype('uint8')
+            packet = cobs.encode(matrix.tostring()) + '\0'
+            ser.write(packet)
+        else:
+            print "matrix:", matrix
 
         t1 = int(time())
         if t1 > t0:
@@ -238,7 +243,8 @@ def main():
             t0 = t1
         n += 1
 
-        read_from_serial(ser)
+        if not opt.no_serial:
+            read_from_serial(ser)
 
 
 def find_serial():
@@ -266,8 +272,11 @@ def find_serial():
 def parse_cmdline():
     from argparse import ArgumentParser
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('--serial',
+    g = parser.add_mutually_exclusive_group()
+    g.add_argument('--serial',
         help="Arduino serial port [default: auto]")
+    g.add_argument('--no-serial', action='store_true',
+        help="There is no arduino, just print")
     parser.add_argument('--source',
         help="Pulseaudio source [default: auto]")
     parser.add_argument('--list-sources', action='store_true',
@@ -280,6 +289,9 @@ def parse_cmdline():
         action='store_const', const=logging.DEBUG, default=logging.INFO)
 
     opt = parser.parse_args()
+
+    if opt.list_sources:
+        opt.no_serial = True
 
     return opt
 
