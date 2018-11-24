@@ -99,7 +99,7 @@ LDFLAGS += -Wl,--gc-sections
 AVRDUDE_PORT = $(PORT)
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 AVRDUDE_FLAGS = -V -F -C $(INSTALL_DIR)/hardware/tools/avrdude.conf \
--p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+-p $(MCU) -P $(AVRDUDE_PORT) -b $(UPLOAD_RATE) -c $(AVRDUDE_PROGRAMMER)
 
 # Program settings
 CC = $(AVR_TOOLS_PATH)/avr-gcc
