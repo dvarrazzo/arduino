@@ -12,6 +12,5 @@ include $(LIBS_DIR)/config.mk
 # CXXINCS =
 
 HAVE_FASTLED = 1
-HAVE_PACKETSERIAL = 1
 
 include $(LIBS_DIR)/tools/rules.mk
