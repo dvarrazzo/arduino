@@ -11,7 +11,7 @@ PORT = /dev/ttyUSB0
 UPLOAD_RATE = 57600
 AVRDUDE_PROGRAMMER = arduino
 ARDUINO_VARIANT = standard
-MCU = atmega168
+MCU = atmega328p
 F_CPU = 16000000
 
 # Optional functionalities
