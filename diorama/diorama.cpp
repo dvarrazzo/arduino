@@ -61,15 +61,15 @@ Scene get_scene(float t)
 void render(CHSV &sky, CHSV &water, CHSV &ground)
 {
 
-    for (int i = 1; i <= 16; i++) {
+    for (int i = 1; i <= min(NLEDS, 16); i++) {
         leds[i] = ground;
     }
 
-    for (int i = 26; i <= 41; i++) {
+    for (int i = 26; i <= min(NLEDS, 41); i++) {
         leds[i] = water;
     }
 
-    for (int i = 50; i <= 65; i++) {
+    for (int i = 50; i <= min(NLEDS, 65); i++) {
         leds[i] = sky;
     }
 }
