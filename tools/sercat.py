@@ -22,7 +22,7 @@ def main():
     q = Queue.Queue()
 
     # set the serial non-blocking to allow use with select
-    ser = serial.Serial('/dev/ttyACM0', 9600)
+    ser = serial.Serial('/dev/ttyUSB0', 57600)
     ser.nonblocking()
 
     # receive data from stdin asynchronously

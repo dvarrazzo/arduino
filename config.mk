@@ -7,7 +7,7 @@ TARGET = $(notdir $(CURDIR))
 # Installation path of the arduino environment
 INSTALL_DIR = /usr/share/arduino
 
-PORT = /dev/ttyACM0
+PORT = /dev/ttyUSB0
 UPLOAD_RATE = 57600
 AVRDUDE_PROGRAMMER = arduino
 ARDUINO_VARIANT = standard
